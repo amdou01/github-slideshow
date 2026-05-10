@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="Recettes">
 <title>Recettes · Checklists interactives</title>
 
-<link rel="manifest" href="data:application/manifest+json;charset=utf-8,%7B%22name%22%3A%22Recettes%20-%20Checklists%22%2C%22short_name%22%3A%22Recettes%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23F4ECDB%22%2C%22theme_color%22%3A%22%231F2A44%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%3Bbase64%2CPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMCAxMCI%2BPHJlY3Qgd2lkdGg9IjEwIiBoZWlnaHQ9IjEwIiBmaWxsPSIjQzc1QjNGIi8%2BPHRleHQgeD0iNSIgeT0iNyIgZm9udC1zaXplPSI2IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjRkFGNEU2Ij5SPC90ZXh0Pjwvc3ZnPg%3D%3D%22%2C%22sizes%22%3A%22any%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%7D%5D%7D">
+<link rel="manifest" href="manifest.webmanifest">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -516,10 +516,26 @@
     .recipes{grid-template-columns:1fr}
   }
 
+  /* PWA install button (floating bottom-right, hidden by default) */
+  .install-fab{
+    position:fixed;right:16px;bottom:16px;z-index:1000;
+    display:none;
+    padding:12px 16px;
+    border:1px solid var(--terra);background:var(--terra);color:var(--paper);
+    border-radius:999px;font:600 13px/1 'Inter Tight',system-ui,sans-serif;
+    letter-spacing:.02em;cursor:pointer;
+    box-shadow:0 6px 18px rgba(20,27,45,.25);
+  }
+  .install-fab:hover,.install-fab:focus-visible{background:var(--ochre);border-color:var(--ochre);color:var(--indigo-deep);outline:none}
+  .install-fab.visible{display:inline-flex;align-items:center;gap:8px}
+  @supports (padding:max(0px)){
+    .install-fab{bottom:max(16px,env(safe-area-inset-bottom));right:max(16px,env(safe-area-inset-right))}
+  }
+
   @media print{
     body{background:white;padding:0}
     .page{border:none;border-radius:0;background:white}
-    .topbar,.actions,.toast,.timers{display:none}
+    .topbar,.actions,.toast,.timers,.install-fab{display:none}
     .section,.warns{break-inside:avoid;page-break-inside:avoid}
     .cb{print-color-adjust:exact;-webkit-print-color-adjust:exact}
   }
@@ -534,6 +550,7 @@
 <div id="topbar"></div>
 <div id="app"></div>
 <div id="actions"></div>
+<button type="button" id="installBtn" class="install-fab" aria-label="Installer l'application">⤓ Installer l'app</button>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
@@ -1394,6 +1411,39 @@
 
   window.addEventListener('hashchange', route);
   route();
+
+  // ════════════════════════════════════════════════════════════
+  //  PWA — service worker registration + install prompt
+  // ════════════════════════════════════════════════════════════
+  const $install = document.getElementById('installBtn');
+  let deferredInstall = null;
+
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredInstall = e;
+    if ($install) $install.classList.add('visible');
+  });
+
+  if ($install) {
+    $install.addEventListener('click', async () => {
+      if (!deferredInstall) return;
+      $install.classList.remove('visible');
+      try {
+        deferredInstall.prompt();
+        await deferredInstall.userChoice;
+      } catch (_) { /* noop */ }
+      deferredInstall = null;
+    });
+  }
+
+  window.addEventListener('appinstalled', () => {
+    deferredInstall = null;
+    if ($install) $install.classList.remove('visible');
+  });
+
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(()=>{}));
+  }
 })();
 </script>
 

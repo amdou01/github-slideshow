@@ -7,6 +7,9 @@ Une petite app web monofichier qui héberge des fiches recettes interactives, av
 - 🧁 **Mini-moelleux au sirop de canne** — version revisitée pour airfryer, 6 personnes, 2 fournées, avec protocole de rattrapage si la pâte est trop liquide.
 - 🥞 **Crêpes sucrées classiques** — pâte traditionnelle avec repos d'1 h, 12 crêpes pour 4 personnes.
 - 🍮 **Flan pâtissier à la vanille** — appareil onctueux sur pâte brisée, moule 22 cm, 8 parts.
+- 🍰 **Tiramisu classique italien** — mascarpone, œufs séparés, biscuits cuillère imbibés au café. 6 personnes, repos 4 h.
+- 🍪 **Cookies aux pépites de chocolat** — croquant aux bords, moelleux au centre. 12 cookies, four 12 min.
+- 🥧 **Quiche lorraine à l'ancienne** — pâte brisée maison, lardons fumés, appareil œufs-crème. 8 parts, moule 26 cm.
 
 ## Lancer en local
 

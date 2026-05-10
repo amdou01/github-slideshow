@@ -974,6 +974,383 @@
         { label: 'Pâte',    text: 'Croustillante en dessous, pas détrempée' },
         { label: 'Goût',    text: 'Vanille présente, équilibre sucre / lait, finition caramélisée' }
       ]
+    },
+
+    tiramisu: {
+      emoji: '🍰',
+      accent: '#6B4423',
+      name: 'Tiramisu',
+      nameEm: 'classique italien',
+      ref: 'CHK-004-v1 · 2026',
+      summary: "Le tiramisu de référence : mascarpone, œufs séparés, biscuits cuillère imbibés au café. 6 personnes, repos 4 h minimum.",
+      meta: [
+        { label: 'Personnes',  value: '6' },
+        { label: 'Plat',       value: '20 × 30 cm' },
+        { label: 'Préparation', value: '25 min' },
+        { label: 'Repos',      value: '4 h min.' },
+        { label: 'Cuisson',    value: 'aucune' }
+      ],
+      phases: [
+        { time: '5 MIN',  name: 'Mise en place',          steps: '01 · 02', accent: 'terra',  target: 's01' },
+        { time: '15 MIN', name: 'Crème mascarpone',       steps: '03 · 04', accent: 'ochre',  target: 's03' },
+        { time: '10 MIN', name: 'Trempage & montage',     steps: '05',      accent: 'indigo', target: 's05' },
+        { time: '4 H',    name: 'Repos & service',        steps: '06 · 07', accent: 'moss',   target: 's06' }
+      ],
+      sections: [
+        {
+          num: '01', title: 'Ingrédients', time: '3 min',
+          items: [
+            { qty: '250 g',  text: 'Mascarpone (à température ambiante)', note: 'Sortir 30 min avant pour éviter les grumeaux', tag: 'Frais' },
+            { qty: '3',      text: 'Œufs entiers (extra-frais, jaunes + blancs séparés)', note: 'Œufs crus : utiliser des œufs très frais ou pasteurisés', tag: 'Frais' },
+            { qty: '80 g',   text: 'Sucre en poudre', tag: 'Sec' },
+            { qty: '24',     text: "Biscuits cuillère (boudoirs ou savoiardi italiens)", tag: 'Sec' },
+            { qty: '300 ml', text: 'Café fort refroidi (espresso allongé)', note: 'À préparer en avance pour qu\'il soit froid au montage', tag: 'Liquide' },
+            { qty: '30 ml',  text: 'Marsala, amaretto ou rhum brun', opt: 'Option', note: "À ajouter au café — l'alcool s'évapore au repos", tag: 'Aromate' },
+            { text: 'Cacao amer en poudre (pour saupoudrage)', tag: 'Finition' },
+            { qty: '1 pincée', text: 'Sel fin (pour stabiliser les blancs)', tag: 'Sec' }
+          ]
+        },
+        {
+          num: '02', title: 'Matériel', time: '2 min',
+          items: [
+            { text: '<b>Plat rectangulaire 20 × 30 cm</b> ou 6 verrines individuelles', tag: 'Service' },
+            { text: '<b>2 culs-de-poule</b> (un pour les blancs, un pour les jaunes)', note: "Le bol des blancs doit être parfaitement propre et sec", tag: 'Mélange' },
+            { text: 'Batteur électrique avec fouets', tag: 'Mélange' },
+            { text: 'Spatule maryse (pour le pliage)', tag: 'Mélange' },
+            { text: 'Tamis fin ou petite passoire (pour le cacao)', tag: 'Finition' },
+            { text: 'Assiette creuse ou bol large (pour tremper les biscuits)', tag: 'Montage' }
+          ]
+        },
+        {
+          num: '03', title: 'Préparation du café et séparation des œufs', time: '5 min',
+          callout: { variant: 'tip', label: 'Anticipation', text: 'Préparer le café <b>au moins 30 min avant</b> pour qu\'il soit complètement froid au moment du trempage. Un café tiède détrempe les biscuits qui se cassent.' },
+          items: [
+            { text: 'Préparer 300 ml de café fort, le verser dans une assiette creuse', tag: 'Étape 1' },
+            { text: 'Ajouter le marsala / amaretto au café si souhaité', opt: 'Option', tag: 'Étape 2' },
+            { text: 'Laisser refroidir complètement (frigo si pressé)', tag: 'Critique' },
+            { text: '<b>Séparer les œufs proprement :</b> aucune trace de jaune dans les blancs', note: "Sinon les blancs ne monteront pas. Casser chaque œuf au-dessus d\'un petit bol avant de transférer", tag: 'Étape 4' },
+            { text: 'Mettre les jaunes dans un bol, les blancs dans le second cul-de-poule', tag: 'Étape 5' }
+          ]
+        },
+        {
+          num: '04', title: 'Crème mascarpone', time: '10 min',
+          callout: { variant: 'warn', label: 'Technique du pliage', text: "Les blancs doivent être incorporés <b>en pliant délicatement à la maryse</b>, jamais au fouet. L'objectif : préserver l'air pour une crème légère. Mouvements de bas en haut, du centre vers l'extérieur." },
+          items: [
+            { text: '<b>Blanchir les jaunes</b> avec 60 g de sucre au batteur, vitesse moyenne, 3 min', note: "Le mélange doit doubler de volume et devenir jaune pâle, mousseux", tag: 'Étape 1' },
+            { text: 'Ajouter le mascarpone aux jaunes blanchis, fouetter doucement jusqu\'à crème lisse', note: "Vitesse minimale, sinon la crème se grumelle", tag: 'Étape 2' },
+            { text: '<b>Monter les blancs en neige ferme</b> avec une pincée de sel', note: 'Commencer vitesse moyenne, finir vitesse max. Bec d\'oiseau ferme = prêt', tag: 'Étape 3' },
+            { text: 'Serrer les blancs avec les 20 g de sucre restants en fin de montage', tag: 'Étape 4' },
+            { text: 'Incorporer <b>1/3 des blancs</b> à la crème mascarpone au fouet (détend l\'appareil)', tag: 'Étape 5' },
+            { text: '<b>Plier le reste des blancs à la maryse</b> en 2-3 fois, mouvements amples', note: 'Arrêter dès que le mélange est homogène — surmélange = crème qui retombe', tag: 'Critique' }
+          ]
+        },
+        {
+          num: '05', title: 'Trempage et montage', time: '10 min',
+          callout: { variant: 'tip', label: 'Le bon trempage', text: "<b>1 seconde par face suffit</b>, pas plus. Les boudoirs absorbent vite. Trop trempés = montage qui s'affaisse, biscuits qui se désagrègent." },
+          items: [
+            { text: '<b>1ʳᵉ couche :</b> tremper rapidement chaque biscuit (1 sec/face) et tapisser le fond du plat', tag: 'Étape 1' },
+            { text: 'Couvrir d\'<b>une moitié de la crème mascarpone</b>, lisser à la spatule', tag: 'Étape 2' },
+            { text: '<b>2ᵉ couche :</b> répéter avec biscuits trempés', tag: 'Étape 3' },
+            { text: 'Couvrir avec le reste de crème, lisser parfaitement', tag: 'Étape 4' },
+            { text: 'Tapoter le plat sur le plan de travail (chasser bulles d\'air)', tag: 'Finition' },
+            { text: '<b>NE PAS saupoudrer le cacao maintenant</b>', note: "Le cacao s'humidifie pendant le repos et perd son aspect — saupoudrage juste avant service", tag: 'Critique' }
+          ]
+        },
+        {
+          num: '06', title: 'Repos au frigo', time: '4 h',
+          timers: [
+            { seconds: 14400, label: 'Repos 4 h' },
+            { seconds: 21600, label: 'Repos 6 h (idéal)' }
+          ],
+          callout: { variant: 'warn', label: 'Patience essentielle', text: "Le tiramisu a besoin de temps pour que <b>les saveurs se développent et la crème se raffermisse</b>. 4 h minimum, idéalement 6-8 h ou une nuit." },
+          items: [
+            { text: 'Couvrir le plat de film alimentaire au contact', note: 'Évite que la crème prenne les odeurs du frigo', tag: 'Préparation' },
+            { text: 'Placer au frigo <b>4 h minimum</b> (idéal : nuit complète)', tag: 'Critique' },
+            { text: 'Vérifier la prise au bout de 4 h : la crème doit être ferme au toucher', tag: 'Contrôle' }
+          ]
+        },
+        {
+          num: '07', title: 'Service', time: '2 min',
+          items: [
+            { text: '<b>Juste avant de servir :</b> saupoudrer généreusement de cacao au tamis fin', note: 'Couvrir toute la surface, mouvement régulier de gauche à droite', tag: 'Critique' },
+            { text: 'Découper en parts à la cuillère ou avec un couteau humidifié', tag: 'Service' },
+            { text: 'Servir frais, jamais à température ambiante', tag: 'Service' },
+            { text: 'Conservation : 48 h au frigo (au-delà, les biscuits ramollissent trop)', tag: 'Stockage' }
+          ]
+        }
+      ],
+      warnings: [
+        { bold: 'Œufs crus :', text: "utiliser exclusivement des œufs extra-frais (date de ponte ≤ 9 jours) ou des œufs pasteurisés. Éviter pour femmes enceintes, jeunes enfants et personnes immunodéprimées." },
+        { bold: 'Mascarpone froid :', text: 'crée des grumeaux au mélange. Le sortir 30 min avant utilisation.' },
+        { bold: 'Blancs qui ne montent pas :', text: 'présence de jaune ou bol gras. Recommencer dans un bol propre. Le sel aide à stabiliser.' },
+        { bold: 'Crème qui retombe :', text: "surmélange au pliage. Plier juste assez pour homogénéiser, pas plus." },
+        { bold: 'Biscuits détrempés :', text: 'trempage trop long. 1 seconde par face suffit, jamais plus.' },
+        { bold: 'Cacao saupoudré trop tôt :', text: 'devient pâteux et perd son aspect. Toujours juste avant service.' }
+      ],
+      quality: [
+        { label: 'Aspect',  text: 'Couches nettes visibles à la coupe, surface uniforme cacaotée' },
+        { label: 'Texture', text: 'Crème ferme mais fondante, biscuits moelleux non détrempés' },
+        { label: 'Couleur', text: "Crème ivoire, cacao brun foncé brillant" },
+        { label: 'Goût',    text: 'Café présent, mascarpone onctueux, équilibre sucré-amer' }
+      ]
+    },
+
+    cookies: {
+      emoji: '🍪',
+      accent: '#D4A04C',
+      name: 'Cookies',
+      nameEm: 'aux pépites de chocolat',
+      ref: 'CHK-005-v1 · 2026',
+      summary: "Le grand classique américain : croquant aux bords, moelleux au centre, généreux en pépites. 12 cookies pour 4-6 personnes.",
+      meta: [
+        { label: 'Cookies',     value: '12 unités' },
+        { label: 'Personnes',   value: '4-6' },
+        { label: 'Préparation', value: '10 min' },
+        { label: 'Repos pâte',  value: '30 min (recommandé)' },
+        { label: 'Cuisson',     value: '12 min' }
+      ],
+      phases: [
+        { time: '3 MIN',  name: 'Mise en place',     steps: '01 · 02', accent: 'terra',  target: 's01' },
+        { time: '7 MIN',  name: 'Mélange pâte',      steps: '03',      accent: 'ochre',  target: 's03' },
+        { time: '30 MIN', name: 'Repos (option)',    steps: '04',      accent: 'indigo', target: 's04' },
+        { time: '15 MIN', name: 'Façonnage & cuisson', steps: '05 · 06', accent: 'moss', target: 's05' }
+      ],
+      sections: [
+        {
+          num: '01', title: 'Ingrédients', time: '2 min',
+          items: [
+            { qty: '180 g', text: 'Farine T55', tag: 'Sec' },
+            { qty: '100 g', text: 'Beurre mou (pas fondu)', note: 'Sortir 1 h avant — texture pommade idéale', tag: 'Frais' },
+            { qty: '80 g',  text: 'Cassonade ou sucre roux', note: 'Donne le moelleux et la couleur ambrée caractéristique', tag: 'Sec' },
+            { qty: '50 g',  text: 'Sucre blanc', tag: 'Sec' },
+            { qty: '1',     text: 'Œuf entier (température ambiante)', tag: 'Frais' },
+            { qty: '1 c.c.', text: 'Extrait de vanille', tag: 'Aromate' },
+            { qty: '½ c.c.', text: 'Bicarbonate alimentaire', note: 'Donne du gonflant et la croûte fissurée', tag: 'Sec' },
+            { qty: '½ c.c.', text: 'Levure chimique', tag: 'Sec' },
+            { qty: '1 pincée', text: 'Sel fin (rehausse le chocolat)', tag: 'Sec' },
+            { qty: '150 g', text: 'Pépites de chocolat noir (ou chocolat haché grossièrement)', note: 'Du chocolat haché donne des pépites irrégulières plus gourmandes', tag: 'Garniture' },
+            { qty: '50 g',  text: 'Noix de pécan ou noisettes concassées', opt: 'Option', tag: 'Garniture' }
+          ]
+        },
+        {
+          num: '02', title: 'Matériel', time: '1 min',
+          items: [
+            { text: '<b>Plaque à pâtisserie</b> + papier sulfurisé (2 plaques si possible pour cuissons en série)', tag: 'Cuisson' },
+            { text: 'Saladier ou bol de robot pâtissier', tag: 'Mélange' },
+            { text: 'Spatule en bois ou maryse', tag: 'Mélange' },
+            { text: '<b>Cuillère à glace 4 cm</b> (boules régulières) ou 2 cuillères à soupe', note: 'La cuillère à glace garantit des cookies de taille identique → cuisson uniforme', tag: 'Façonnage' },
+            { text: 'Grille de refroidissement (indispensable pour la texture finale)', tag: 'Refroidissement' }
+          ]
+        },
+        {
+          num: '03', title: 'Préparation de la pâte', time: '7 min',
+          callout: { variant: 'tip', label: 'Ordre d\'incorporation', text: "Toujours commencer par <b>crémer le beurre + les sucres</b>. Cette étape incorpore de l'air et donne la texture aérée. Beurre fondu = cookies plats et durs." },
+          items: [
+            { text: '<b>Crémer beurre + cassonade + sucre blanc</b> au fouet 2-3 min', note: 'Le mélange doit blanchir et devenir mousseux', tag: 'Étape 1' },
+            { text: 'Ajouter l\'œuf et la vanille, fouetter pour incorporer', tag: 'Étape 2' },
+            { text: '<b>Tamiser ensemble :</b> farine + bicarbonate + levure + sel', tag: 'Étape 3' },
+            { text: 'Incorporer le sec en 2 fois à la spatule, sans trop travailler', note: 'Surmélange = cookies durs. Arrêter dès que la farine disparaît', tag: 'Critique' },
+            { text: 'Ajouter les pépites de chocolat (et noix si option), mélanger à la spatule', tag: 'Étape 5' }
+          ]
+        },
+        {
+          num: '04', title: 'Repos de la pâte', time: '30 min',
+          variant: 'tip',
+          callout: { variant: 'warn', label: 'Étape qui change tout', text: "Le repos au frigo permet à <b>la farine d'absorber les liquides et au beurre de raffermir</b>. Résultat : cookies qui s'étalent moins, plus épais et plus moelleux. <b>Optionnel mais fortement recommandé.</b>" },
+          timers: [
+            { seconds: 1800, label: 'Repos 30 min' },
+            { seconds: 7200, label: 'Repos 2 h (idéal)' }
+          ],
+          items: [
+            { text: 'Couvrir la pâte de film alimentaire au contact', tag: 'Préparation' },
+            { text: 'Placer au frigo <b>30 min minimum</b> (jusqu\'à 24 h pour développement maximal)', tag: 'Repos' },
+            { text: 'Si pâte trop dure après long repos : laisser 10 min à température ambiante avant façonnage', tag: 'Reprise' }
+          ]
+        },
+        {
+          num: '05', title: 'Façonnage et cuisson', time: '15 min',
+          tempBlock: [
+            { lab: 'Température', val: '180', unit: '°C' },
+            { lab: 'Cuisson',     val: '12',  unit: 'min' },
+            { lab: 'Espacement',  val: '5',   unit: 'cm' }
+          ],
+          timers: [
+            { seconds: 720, label: 'Cuisson 12 min' },
+            { seconds: 600, label: 'Contrôle 10 min' }
+          ],
+          items: [
+            { text: 'Préchauffer le four à <b>180°C chaleur tournante</b>', tag: 'Étape 1' },
+            { text: 'Tapisser la plaque de papier sulfurisé', tag: 'Étape 2' },
+            { text: '<b>Former 12 boules</b> à la cuillère à glace, espacées de 5 cm sur la plaque', note: 'Les cookies s\'étalent beaucoup à la cuisson — espacement critique', tag: 'Critique' },
+            { text: 'Aplatir légèrement chaque boule à la paume', tag: 'Étape 4' },
+            { text: 'Enfourner <b>12 minutes</b> à 180°C', tag: 'Étape 5' },
+            { text: '<b>Sortir quand les bords sont dorés mais le centre encore mou</b>', note: 'Ils continuent à cuire sur la plaque. Trop cuits = durs en refroidissant', tag: 'Critique' }
+          ]
+        },
+        {
+          num: '06', title: 'Refroidissement et service', time: '10 min',
+          items: [
+            { text: 'Laisser <b>5 minutes sur la plaque chaude</b> (finition de cuisson)', note: 'Démouler trop tôt = cookies qui cassent', tag: 'Critique' },
+            { text: 'Transférer sur grille avec une spatule large', tag: 'Étape 2' },
+            { text: 'Laisser refroidir 5 min de plus pour texture optimale', tag: 'Étape 3' },
+            { text: 'Servir tièdes (chocolat encore coulant) ou à température ambiante', tag: 'Service' },
+            { text: 'Conservation : 5 jours dans une boîte hermétique avec un morceau de pain (garde le moelleux)', tag: 'Stockage' },
+            { text: 'Congélation possible : crue (boules) ou cuite (paquet hermétique)', tag: 'Stockage' }
+          ]
+        }
+      ],
+      warnings: [
+        { bold: 'Beurre fondu au lieu de mou :', text: "cookies plats et durs. Toujours beurre pommade — souple mais pas liquide." },
+        { bold: 'Surmélange après ajout de la farine :', text: 'développe le gluten = cookies caoutchouteux. Mélanger juste assez.' },
+        { bold: 'Cookies trop espacés ou trop serrés :', text: '5 cm est le bon compromis. Trop serrés = cookies fusionnent en plaque.' },
+        { bold: 'Sortie trop tardive du four :', text: "ils paraissent crus mais durcissent en refroidissant. Faire confiance et sortir dès bords dorés." },
+        { bold: 'Pas de repos de la pâte :', text: "cookies plus plats et plus secs. Si pas le temps : 15 min au congélateur fait illusion." }
+      ],
+      quality: [
+        { label: 'Aspect',  text: 'Bords craquelés, centre légèrement bombé, pépites visibles' },
+        { label: 'Texture', text: 'Croquant aux bords, moelleux au cœur, fondant des pépites' },
+        { label: 'Couleur', text: 'Doré ambré uniforme' },
+        { label: 'Goût',    text: 'Beurre, cassonade, chocolat, vanille — équilibre sans surcharge' }
+      ]
+    },
+
+    quiche: {
+      emoji: '🥧',
+      accent: '#5C7361',
+      name: 'Quiche lorraine',
+      nameEm: "à l'ancienne",
+      ref: 'CHK-006-v1 · 2026',
+      summary: "La vraie quiche lorraine : pâte brisée maison, lardons fumés, appareil œufs-crème onctueux. 8 parts, moule 26 cm.",
+      meta: [
+        { label: 'Parts',       value: '8' },
+        { label: 'Moule',       value: '26 cm' },
+        { label: 'Préparation', value: '20 min' },
+        { label: 'Repos pâte',  value: '30 min' },
+        { label: 'Cuisson',     value: '35-40 min' }
+      ],
+      phases: [
+        { time: '10 MIN', name: 'Pâte brisée',     steps: '01 · 02 · 03', accent: 'terra',  target: 's01' },
+        { time: '15 MIN', name: 'Foncage & précuisson', steps: '04',      accent: 'ochre',  target: 's04' },
+        { time: '10 MIN', name: 'Garniture & appareil', steps: '05 · 06', accent: 'indigo', target: 's05' },
+        { time: '40 MIN', name: 'Cuisson & service', steps: '07 · 08',    accent: 'moss',   target: 's07' }
+      ],
+      sections: [
+        {
+          num: '01', title: 'Ingrédients — pâte brisée', time: '2 min',
+          items: [
+            { qty: '200 g',  text: 'Farine T55', tag: 'Sec' },
+            { qty: '100 g',  text: 'Beurre froid en cubes', note: "Le beurre doit rester froid jusqu'au bout pour une pâte croustillante", tag: 'Frais' },
+            { qty: '50 ml',  text: 'Eau froide (glacée si possible)', tag: 'Liquide' },
+            { qty: '1 pincée', text: 'Sel fin', tag: 'Sec' },
+            { text: 'Pâte brisée du commerce (1 rouleau 230 g)', opt: 'Raccourci', note: 'Préférer une pâte au beurre, pas margarine', tag: 'Alternative' }
+          ]
+        },
+        {
+          num: '02', title: 'Ingrédients — garniture & appareil', time: '2 min',
+          items: [
+            { qty: '200 g',  text: 'Lardons fumés (allumettes ou en cubes)', note: "Si trop salés : les blanchir 2 min à l'eau bouillante", tag: 'Frais' },
+            { qty: '4',      text: 'Œufs entiers', tag: 'Frais' },
+            { qty: '200 ml', text: 'Crème fraîche épaisse entière', note: 'La crème entière donne l\'onctuosité — éviter l\'allégée', tag: 'Liquide' },
+            { qty: '200 ml', text: 'Lait entier', tag: 'Liquide' },
+            { qty: 'pm',     text: 'Sel, poivre du moulin', note: 'Goûter avant — les lardons salent déjà beaucoup', tag: 'Assaisonnement' },
+            { qty: '1 pincée', text: 'Noix de muscade râpée', opt: 'Option', note: 'Touche traditionnelle — discret mais essentiel', tag: 'Aromate' },
+            { qty: '50 g',   text: 'Gruyère râpé', opt: 'Hérésie lorraine', note: "La vraie lorraine n'a PAS de fromage — mais une variante populaire", tag: 'Garniture' }
+          ]
+        },
+        {
+          num: '03', title: 'Préparation de la pâte brisée', time: '8 min',
+          callout: { variant: 'tip', label: 'Méthode du sablage', text: "Sabler = mélanger beurre froid et farine du bout des doigts <b>jusqu'à obtenir une texture sableuse</b>. Cette technique enrobe la farine de gras → pâte croustillante, peu élastique." },
+          items: [
+            { text: 'Verser farine + sel dans un saladier', tag: 'Étape 1' },
+            { text: 'Ajouter le beurre froid en cubes', tag: 'Étape 2' },
+            { text: '<b>Sabler du bout des doigts</b> 2-3 min jusqu\'à texture de gros sable', note: "Travailler vite pour ne pas réchauffer le beurre", tag: 'Critique' },
+            { text: 'Faire un puits, verser l\'eau froide au centre', tag: 'Étape 4' },
+            { text: 'Mélanger rapidement à la fourchette puis former une boule à la main', note: "Ne pas pétrir — juste assembler. La pâte doit être homogène mais pas lisse", tag: 'Étape 5' },
+            { text: 'Filmer la boule, aplatir en disque, <b>réfrigérer 30 min</b>', tag: 'Repos' }
+          ],
+          timers: [ { seconds: 1800, label: 'Repos pâte 30 min' } ]
+        },
+        {
+          num: '04', title: 'Foncer le moule et précuire', time: '15 min',
+          callout: { variant: 'tip', label: 'Précuisson "à blanc"', text: "La précuisson de la pâte vide <b>évite le fond détrempé</b> par l'appareil liquide. Étape essentielle pour une quiche réussie." },
+          items: [
+            { text: 'Préchauffer le four à <b>200°C chaleur tournante</b>', tag: 'Étape 1' },
+            { text: 'Beurrer légèrement le moule', tag: 'Étape 2' },
+            { text: 'Étaler la pâte sur 3-4 mm d\'épaisseur (sur plan fariné)', tag: 'Étape 3' },
+            { text: '<b>Foncer le moule</b>, remonter sur les bords, couper l\'excédent au rouleau', tag: 'Étape 4' },
+            { text: 'Piquer le fond à la fourchette (évite les cloques)', tag: 'Étape 5' },
+            { text: 'Recouvrir d\'un papier sulfurisé + lest (haricots secs / billes céramique)', note: 'Le lest empêche la pâte de gonfler et de glisser des bords', tag: 'Étape 6' },
+            { text: '<b>Précuire 10 minutes</b> à 200°C', tag: 'Étape 7' },
+            { text: 'Sortir, retirer lest et papier, baisser le four à 180°C', tag: 'Transition' }
+          ],
+          timers: [ { seconds: 600, label: 'Précuisson 10 min' } ]
+        },
+        {
+          num: '05', title: 'Préparer les lardons', time: '5 min',
+          callout: { variant: 'warn', label: 'Lardons fumés et sel', text: "<b>Goûter un lardon cru avant de saler l'appareil.</b> S'ils sont très salés, les blanchir 2 min à l'eau bouillante avant de les poêler." },
+          items: [
+            { text: '(Optionnel) Blanchir les lardons 2 min à l\'eau bouillante si très salés', opt: 'Option', tag: 'Préparation' },
+            { text: 'Faire revenir les lardons à sec dans une poêle <b>5 min</b>, feu moyen', note: "Pas besoin d'huile — ils rendent leur graisse", tag: 'Étape 2' },
+            { text: 'Égoutter sur papier absorbant (retirer l\'excès de gras)', tag: 'Étape 3' },
+            { text: 'Réserver tièdes', tag: 'Étape 4' }
+          ]
+        },
+        {
+          num: '06', title: "Préparation de l'appareil", time: '5 min',
+          items: [
+            { text: 'Casser les 4 œufs dans un saladier, fouetter brièvement (pas trop d\'air)', tag: 'Étape 1' },
+            { text: 'Ajouter la crème fraîche, fouetter pour homogénéiser', tag: 'Étape 2' },
+            { text: 'Verser le lait, fouetter à nouveau', tag: 'Étape 3' },
+            { text: '<b>Assaisonner :</b> poivre généreux, muscade, sel modéré (goûter avant)', note: "Les lardons apportent déjà beaucoup de sel", tag: 'Critique' },
+            { text: 'Vérifier l\'assaisonnement avec le bout du doigt', tag: 'Contrôle' }
+          ]
+        },
+        {
+          num: '07', title: 'Montage et cuisson', time: '35 min',
+          tempBlock: [
+            { lab: 'Température', val: '180',   unit: '°C' },
+            { lab: 'Cuisson',     val: '35-40', unit: 'min' },
+            { lab: 'Position',    val: 'Mi',    unit: 'four' }
+          ],
+          timers: [
+            { seconds: 2100, label: 'Cuisson 35 min' },
+            { seconds: 2400, label: 'Cuisson 40 min' }
+          ],
+          items: [
+            { text: 'Répartir les lardons sur le fond précuit', tag: 'Étape 1' },
+            { text: 'Saupoudrer de gruyère râpé si option choisie', opt: 'Option', tag: 'Étape 2' },
+            { text: '<b>Verser l\'appareil délicatement</b> jusqu\'à 5 mm du bord (pas plus)', note: "Si le bord est dépassé, ça déborde et brûle au four", tag: 'Critique' },
+            { text: 'Enfourner <b>35-40 minutes</b> à 180°C, position mi-hauteur', tag: 'Étape 4' },
+            { text: 'À 30 min : vérifier la coloration (dorée, pas brune)', note: 'Si trop foncé : couvrir d\'alu pour les dernières min', tag: 'Contrôle' },
+            { text: '<b>Test de cuisson :</b> la lame de couteau ressort propre, le centre est juste pris (légèrement tremblotant)', tag: 'Critique' }
+          ]
+        },
+        {
+          num: '08', title: 'Repos et service', time: '5 min',
+          items: [
+            { text: 'Sortir du four, laisser tiédir <b>5-10 minutes</b>', note: "L'appareil finit de prendre, le démoulage est plus facile", tag: 'Critique' },
+            { text: 'Démouler sur planche ou plat de service', tag: 'Étape 2' },
+            { text: 'Découper en 8 parts au couteau bien aiguisé', tag: 'Étape 3' },
+            { text: 'Servir tiède avec une salade verte (vinaigrette moutarde)', note: "Plat complet du soir ou entrée généreuse", tag: 'Service' },
+            { text: 'Conservation : 2 jours au frigo, sous film', tag: 'Stockage' },
+            { text: 'Réchauffage : 10 min au four 150°C (jamais micro-ondes — pâte caoutchouteuse)', tag: 'Stockage' }
+          ]
+        }
+      ],
+      warnings: [
+        { bold: 'Pâte qui s\'effondre à la précuisson :', text: 'lest insuffisant ou pâte mal foncée. Bien remonter sur les bords et lester généreusement.' },
+        { bold: 'Fond détrempé :', text: 'précuisson sautée ou trop courte. Toujours précuire 10 min à 200°C avant garniture.' },
+        { bold: 'Quiche trop salée :', text: 'lardons pas blanchis + sel ajouté. Toujours goûter un lardon avant de saler l\'appareil.' },
+        { bold: 'Centre liquide à la sortie :', text: "cuisson insuffisante. Prolonger 5-10 min. Le centre doit trembloter mais pas couler." },
+        { bold: 'Surface trop dorée mais centre cru :', text: 'four trop chaud. Couvrir d\'alu et baisser à 160°C pour finir.' },
+        { bold: 'Bord brûlé :', text: 'appareil débordé pendant la cuisson. Toujours laisser 5 mm de marge en dessous du bord.' }
+      ],
+      quality: [
+        { label: 'Aspect',  text: 'Surface dorée, légèrement gonflée mais pas brûlée' },
+        { label: 'Texture', text: 'Pâte croustillante, appareil ferme et fondant, lardons croquants' },
+        { label: 'Couleur', text: 'Doré uniforme, parsemé de lardons brun-rouge' },
+        { label: 'Goût',    text: 'Lardons fumés, crème onctueuse, muscade en arrière-plan, équilibre salé' }
+      ]
     }
 
   }; // end RECIPES

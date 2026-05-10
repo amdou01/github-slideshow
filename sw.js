@@ -1,17 +1,17 @@
 /* Service Worker — Recettes Checklists
  * Strategy:
- *  - Precache app shell (mini-moelleux.html, /, manifest)
+ *  - Precache app shell (index.html, /, manifest)
  *  - cache-first for same-origin GET
  *  - stale-while-revalidate for Google Fonts (separate long-TTL cache)
  *  - bypass everything else
  */
 
-const APP_CACHE   = 'recipes-cache-v1';
+const APP_CACHE   = 'recipes-cache-v2';
 const FONTS_CACHE = 'recipes-fonts-v1';
 
 const PRECACHE_URLS = [
   './',
-  './mini-moelleux.html',
+  './index.html',
   './manifest.webmanifest'
 ];
 
@@ -69,7 +69,7 @@ const cacheFirst = async (request) => {
   } catch (err) {
     // Last-resort offline fallback: serve the app shell for navigations
     if (request.mode === 'navigate') {
-      const shell = await cache.match('./mini-moelleux.html')
+      const shell = await cache.match('./index.html')
         || await cache.match('./');
       if (shell) return shell;
     }

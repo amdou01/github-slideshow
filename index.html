@@ -1,13 +1,1988 @@
----
-layout: presentation
----
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#1F2A44">
+<meta name="description" content="Checklists interactives de recettes — moelleux, crêpes, flan.">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Recettes">
+<title>Recettes · Checklists interactives</title>
 
-{% for post in site.posts reversed %}
-	{% include slide.html %}
-	<div class="page-break"></div>
-{% endfor %}
-{% unless site.simple-slideshow %}
-{% if site.overview %}
-<section id="overview" class="step" {% for attr in site.overview-data %} data-{{attr[0]}}="{{attr[1]}}"{% endfor %}></section>
-{% endif %}
-{% endunless %}
+<link rel="manifest" href="manifest.webmanifest">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,300..700,0..100&family=Inter+Tight:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --bone:#F4ECDB;
+    --paper:#FAF4E6;
+    --indigo:#1F2A44;
+    --indigo-deep:#141B2D;
+    --terra:#C75B3F;
+    --ochre:#D4A04C;
+    --ochre-dark:#9C6F1E;
+    --moss:#5C7361;
+    --ink:#1B1410;
+    --soft:#5E5040;
+    --line:#D9C9AE;
+    --line-soft:#E8DCC1;
+    --warm-bg:#FFF8EC;
+    --safe-top:env(safe-area-inset-top, 0px);
+    --safe-bottom:env(safe-area-inset-bottom, 0px);
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+  body{
+    background:var(--bone);
+    color:var(--ink);
+    font-family:'Inter Tight',-apple-system,BlinkMacSystemFont,sans-serif;
+    font-weight:500;
+    line-height:1.55;
+    font-size:15.5px;
+    -webkit-font-smoothing:antialiased;
+    padding:0 16px;
+    padding-top:calc(56px + var(--safe-top));
+    padding-bottom:calc(96px + var(--safe-bottom));
+    min-height:100vh;
+    overscroll-behavior-y:contain;
+  }
+
+  /* TOP BAR ─────────────────────────────────────────────────── */
+  .topbar{
+    position:fixed;top:0;left:0;right:0;
+    background:rgba(250,244,230,.92);
+    backdrop-filter:saturate(180%) blur(8px);
+    -webkit-backdrop-filter:saturate(180%) blur(8px);
+    border-bottom:1px solid var(--ink);
+    padding:10px 16px;
+    padding-top:calc(10px + var(--safe-top));
+    z-index:50;
+  }
+  .topbar .row{
+    display:flex;align-items:center;gap:10px;
+    max-width:860px;margin:0 auto 6px;
+  }
+  .back-btn{
+    background:transparent;border:none;cursor:pointer;
+    color:var(--terra);font-family:'JetBrains Mono',monospace;
+    font-size:11px;font-weight:700;letter-spacing:1px;
+    text-transform:uppercase;
+    display:inline-flex;align-items:center;gap:4px;
+    padding:6px 8px;margin:-6px 0 -6px -8px;
+    border-radius:3px;min-height:36px;
+  }
+  .back-btn:hover,.back-btn:focus-visible{background:var(--bone);outline:none}
+  .topbar .title{
+    font-family:'Fraunces',serif;font-style:italic;font-size:13px;
+    color:var(--indigo);flex:1;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  }
+  .topbar .pct{
+    font-family:'JetBrains Mono',monospace;font-size:12px;
+    font-weight:700;color:var(--terra);letter-spacing:.5px;
+  }
+  .progress-track{
+    height:4px;background:var(--line-soft);border-radius:2px;
+    overflow:hidden;max-width:860px;margin:0 auto;
+  }
+  .progress-fill{
+    height:100%;
+    background:linear-gradient(90deg,var(--terra),var(--ochre),var(--moss));
+    width:0%;transition:width .3s ease;
+  }
+  .topbar.no-progress .progress-track{display:none}
+
+  /* APP CONTAINER ───────────────────────────────────────────── */
+  .page{
+    max-width:860px;margin:0 auto;
+    background:var(--paper);
+    border:1px solid var(--ink);border-radius:4px;overflow:hidden;
+  }
+
+  /* HOME SCREEN ─────────────────────────────────────────────── */
+  .home-head{padding:32px 36px 26px;border-bottom:2px solid var(--ink);position:relative}
+  .home-head::before{
+    content:"";position:absolute;top:0;left:0;right:0;height:6px;
+    background:linear-gradient(90deg,var(--terra) 0%,var(--ochre) 50%,var(--moss) 100%);
+  }
+  .home-head .kicker{
+    font-family:'JetBrains Mono',monospace;font-size:10px;
+    letter-spacing:2px;text-transform:uppercase;
+    color:var(--terra);font-weight:700;margin-bottom:14px;
+  }
+  .home-head h1{
+    font-family:'Fraunces',serif;font-weight:400;
+    font-variation-settings:"opsz" 144,"SOFT" 30;
+    font-size:clamp(36px,6vw,54px);line-height:1;
+    color:var(--indigo);letter-spacing:-1.5px;margin-bottom:8px;
+  }
+  .home-head h1 em{font-style:italic;color:var(--terra);font-weight:500}
+  .home-head .lead{
+    color:var(--soft);font-family:'Fraunces',serif;
+    font-style:italic;font-size:17px;font-weight:300;max-width:560px;
+  }
+
+  .recipes{padding:28px 36px 36px;display:grid;gap:16px}
+  @media(min-width:680px){.recipes{grid-template-columns:repeat(2,1fr)}}
+
+  .r-card{
+    background:var(--paper);
+    border:1.5px solid var(--ink);
+    border-radius:4px;
+    padding:22px 22px 18px;
+    text-decoration:none;color:inherit;
+    display:flex;flex-direction:column;
+    transition:transform .15s ease,box-shadow .15s ease;
+    position:relative;overflow:hidden;
+    min-height:220px;
+  }
+  .r-card::before{
+    content:"";position:absolute;top:0;left:0;right:0;height:4px;
+    background:var(--accent,var(--terra));
+  }
+  .r-card:hover,.r-card:focus-visible{
+    transform:translateY(-2px);
+    box-shadow:0 6px 20px rgba(0,0,0,.08);
+    outline:none;
+  }
+  .r-card .topline{
+    display:flex;align-items:flex-start;justify-content:space-between;
+    margin-bottom:14px;gap:12px;
+  }
+  .r-card .emoji{font-size:38px;line-height:1}
+  .r-card .badge-pct{
+    font-family:'JetBrains Mono',monospace;
+    background:var(--bone);border:1px solid var(--line);
+    padding:4px 10px;border-radius:50px;
+    font-size:10px;font-weight:700;letter-spacing:1px;
+    color:var(--soft);
+  }
+  .r-card .badge-pct.active{background:var(--moss);color:white;border-color:var(--moss)}
+  .r-card h3{
+    font-family:'Fraunces',serif;font-weight:500;
+    font-size:24px;line-height:1.1;color:var(--indigo);
+    margin-bottom:4px;
+  }
+  .r-card .em{font-style:italic;color:var(--terra);font-weight:400;font-size:18px;display:block}
+  .r-card .stats{
+    display:flex;flex-wrap:wrap;gap:12px;margin-top:14px;
+    padding-top:14px;border-top:1px dashed var(--line);
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;letter-spacing:1px;text-transform:uppercase;
+    color:var(--soft);font-weight:700;
+  }
+  .r-card .ref{
+    font-family:'JetBrains Mono',monospace;
+    font-size:9px;letter-spacing:1.2px;text-transform:uppercase;
+    color:var(--soft);font-weight:600;margin-top:auto;padding-top:14px;
+  }
+  .r-card .mini-track{
+    height:3px;background:var(--line-soft);border-radius:2px;
+    overflow:hidden;margin-top:10px;
+  }
+  .r-card .mini-fill{
+    height:100%;background:var(--accent,var(--terra));
+    transition:width .3s ease;
+  }
+
+  /* RECIPE HEADER ──────────────────────────────────────────── */
+  .head{padding:32px 36px 26px;border-bottom:2px solid var(--ink);background:var(--paper);position:relative}
+  .head::before{
+    content:"";position:absolute;top:0;left:0;right:0;height:6px;
+    background:linear-gradient(90deg,var(--terra) 0%,var(--ochre) 50%,var(--moss) 100%);
+  }
+  .top-row{
+    display:flex;justify-content:space-between;align-items:center;
+    font-family:'JetBrains Mono',monospace;font-size:10px;
+    letter-spacing:2px;text-transform:uppercase;
+    color:var(--terra);font-weight:700;margin-bottom:18px;
+  }
+  .top-row .ref{color:var(--soft)}
+  h1.recipe-title{
+    font-family:'Fraunces',serif;font-weight:400;
+    font-variation-settings:"opsz" 144,"SOFT" 30;
+    font-size:clamp(32px,5vw,48px);line-height:1;
+    color:var(--indigo);letter-spacing:-1.2px;margin-bottom:6px;
+  }
+  h1.recipe-title em{font-style:italic;color:var(--terra);font-weight:500}
+  .subtitle{
+    color:var(--soft);font-family:'Fraunces',serif;
+    font-style:italic;font-size:16px;font-weight:300;
+  }
+  .meta-row{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:14px;
+    margin-top:22px;padding-top:18px;border-top:1px solid var(--line);
+  }
+  .meta b{
+    display:block;font-family:'JetBrains Mono',monospace;
+    font-size:9px;letter-spacing:1.5px;text-transform:uppercase;
+    color:var(--soft);font-weight:700;margin-bottom:4px;
+  }
+  .meta span{
+    font-family:'Fraunces',serif;font-size:18px;font-weight:500;color:var(--indigo);
+  }
+
+  /* TIMELINE ────────────────────────────────────────────────── */
+  .timeline{margin-top:22px;padding-top:18px;border-top:1px solid var(--line)}
+  .timeline-title{
+    font-family:'JetBrains Mono',monospace;font-size:10px;
+    letter-spacing:2.5px;text-transform:uppercase;
+    color:var(--terra);font-weight:700;margin-bottom:14px;
+  }
+  .phases{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px}
+  .phase{
+    background:var(--bone);border:1px solid var(--line);
+    border-left:3px solid var(--terra);
+    border-radius:2px;padding:10px 12px;
+    text-decoration:none;color:inherit;transition:transform .15s ease;
+    text-align:left;cursor:pointer;font:inherit;
+  }
+  .phase:active{transform:scale(.98)}
+  .phase:focus-visible{outline:2px solid var(--terra);outline-offset:2px}
+  .phase.ochre{border-left-color:var(--ochre)}
+  .phase.ochre .phase-lab{color:var(--ochre-dark)}
+  .phase.indigo{border-left-color:var(--indigo)}
+  .phase.indigo .phase-lab{color:var(--indigo)}
+  .phase.moss{border-left-color:var(--moss)}
+  .phase.moss .phase-lab{color:var(--moss)}
+  .phase-lab{
+    font-family:'JetBrains Mono',monospace;font-size:9px;
+    letter-spacing:1.5px;color:var(--terra);font-weight:700;margin-bottom:3px;
+  }
+  .phase-name{
+    font-family:'Fraunces',serif;font-size:14px;
+    color:var(--indigo);font-weight:500;line-height:1.2;
+  }
+  .phase-steps{font-size:11px;color:var(--soft);margin-top:3px;font-family:'JetBrains Mono',monospace}
+
+  /* SECTION ─────────────────────────────────────────────────── */
+  .section{
+    padding:28px 36px 24px;border-bottom:1px solid var(--line);
+    scroll-margin-top:80px;
+  }
+  .section:last-of-type{border-bottom:none}
+  .section.tip{background:linear-gradient(180deg,var(--warm-bg) 0%,var(--paper) 100%)}
+  .section.sos{background:var(--warm-bg);border-top:2px solid var(--terra)}
+  .section-head{display:flex;align-items:center;gap:14px;margin-bottom:18px}
+  .step-num{
+    font-family:'Fraunces',serif;font-style:italic;font-weight:300;
+    font-size:38px;color:var(--terra);line-height:1;
+    letter-spacing:-2px;min-width:50px;
+  }
+  .step-num.moss{color:var(--moss)}
+  .step-num.warn{color:var(--terra)}
+  .section-head h2{
+    font-family:'Fraunces',serif;font-weight:500;font-size:22px;
+    color:var(--indigo);line-height:1.1;flex:1;
+  }
+  .time{
+    font-family:'JetBrains Mono',monospace;font-size:11px;
+    color:var(--soft);background:var(--bone);border:1px solid var(--line);
+    padding:4px 10px;border-radius:2px;font-weight:700;
+    letter-spacing:1px;white-space:nowrap;
+  }
+  .time.moss{background:var(--moss);color:white;border-color:var(--moss)}
+  .time.terra{background:var(--terra);color:white;border-color:var(--terra)}
+  .section-intro{
+    font-family:'Fraunces',serif;font-style:italic;
+    color:var(--soft);font-size:15px;margin-bottom:18px;line-height:1.5;
+  }
+
+  /* CALLOUTS ────────────────────────────────────────────────── */
+  .callout{padding:14px 18px;margin-bottom:18px;border-radius:0 3px 3px 0}
+  .callout.tip{background:var(--warm-bg);border-left:3px solid var(--ochre)}
+  .callout.warn{background:var(--moss);color:white;padding:14px 18px;border-radius:3px}
+  .callout.dark{background:var(--indigo-deep);color:var(--bone);padding:18px 22px;border-radius:3px;border-left:4px solid var(--ochre);margin-top:24px}
+  .callout.note{background:#fff;border:1px dashed var(--line);padding:14px 18px;margin-top:14px;border-radius:3px}
+  .callout-lab{
+    font-family:'JetBrains Mono',monospace;font-size:10px;
+    letter-spacing:2px;text-transform:uppercase;font-weight:700;margin-bottom:4px;
+  }
+  .callout.tip .callout-lab{color:var(--ochre-dark)}
+  .callout.warn .callout-lab{color:#FFE9C7}
+  .callout.dark .callout-lab{color:var(--ochre);margin-bottom:6px}
+  .callout.note .callout-lab{color:var(--moss)}
+  .callout p{font-size:14px;line-height:1.5;font-style:italic;font-family:'Fraunces',serif}
+  .callout.warn p{font-weight:500;font-style:normal;font-family:inherit;font-size:14px}
+  .callout.warn b{color:#FFE9C7}
+  .callout.dark p{font-style:italic;font-size:15px;line-height:1.5}
+  .callout.dark b{font-style:normal;font-weight:700;color:var(--ochre)}
+  .callout.note p{font-style:normal;font-family:inherit;color:var(--ink)}
+
+  /* SUB HEADERS ─────────────────────────────────────────────── */
+  .sub-head{
+    font-family:'JetBrains Mono',monospace;font-size:11px;
+    letter-spacing:2.5px;text-transform:uppercase;
+    color:var(--terra);font-weight:700;
+    margin:24px 0 12px;padding-top:8px;border-top:1px solid var(--line);
+  }
+  .sub-head:first-of-type{margin-top:0;padding-top:0;border-top:none}
+  .sub-head .badge{
+    background:var(--moss);color:white;
+    padding:2px 8px;border-radius:2px;
+    font-size:9px;margin-left:6px;
+  }
+  .sub-head .badge.ochre{background:var(--ochre);color:var(--indigo-deep)}
+
+  /* CHECKLIST ───────────────────────────────────────────────── */
+  .check-list{list-style:none;padding:0}
+  .check-list li{
+    display:grid;grid-template-columns:auto 1fr auto;gap:14px;
+    align-items:flex-start;padding:11px 0;
+    border-bottom:1px dashed var(--line-soft);
+  }
+  .check-list li:last-child{border-bottom:none}
+  .cb-wrap{
+    display:inline-flex;align-items:flex-start;cursor:pointer;
+    min-width:44px;min-height:44px;margin:-11px 0;padding:11px 0;
+  }
+  .cb{
+    display:inline-block;width:22px;height:22px;
+    border:2px solid var(--ink);border-radius:3px;
+    background:var(--paper);position:relative;flex-shrink:0;
+    transition:all .15s ease;margin-top:1px;
+  }
+  .cb-wrap:hover .cb{border-color:var(--terra)}
+  .cb-wrap:focus-visible .cb{outline:2px solid var(--terra);outline-offset:2px}
+  input[type="checkbox"]{position:absolute;opacity:0;pointer-events:none}
+  input[type="checkbox"]:checked + .cb{background:var(--moss);border-color:var(--moss)}
+  input[type="checkbox"]:checked + .cb::after{
+    content:"";position:absolute;left:6px;top:2px;
+    width:6px;height:11px;border:solid white;
+    border-width:0 2.5px 2.5px 0;transform:rotate(42deg);
+  }
+  .label{line-height:1.45;color:var(--ink);font-weight:500;font-size:15.5px;transition:opacity .2s ease}
+  li.done .label{text-decoration:line-through;color:var(--soft);opacity:.6}
+  .label .qty{
+    font-family:'JetBrains Mono',monospace;font-weight:700;
+    color:var(--indigo);font-size:14.5px;
+    background:var(--bone);padding:1px 8px;border-radius:3px;
+    margin-right:6px;border:1px solid var(--line);
+  }
+  .label .note{
+    display:block;font-family:'Fraunces',serif;font-style:italic;
+    font-size:13.5px;color:var(--soft);margin-top:3px;font-weight:400;
+  }
+  .label .opt{
+    display:inline-block;background:var(--ochre);color:var(--indigo-deep);
+    font-family:'JetBrains Mono',monospace;
+    font-size:9px;letter-spacing:1.5px;text-transform:uppercase;font-weight:700;
+    padding:2px 6px;border-radius:2px;margin-left:6px;vertical-align:middle;
+  }
+  .tag{
+    font-family:'JetBrains Mono',monospace;font-size:9px;
+    letter-spacing:1.2px;text-transform:uppercase;
+    color:var(--soft);font-weight:700;padding-top:5px;white-space:nowrap;
+  }
+
+  /* TEMP BLOCK ──────────────────────────────────────────────── */
+  .temp-block{
+    background:var(--indigo);color:var(--bone);padding:18px 22px;border-radius:3px;
+    margin:14px 0 4px;display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:18px;align-items:center;
+  }
+  .temp-cell .lab{
+    font-family:'JetBrains Mono',monospace;font-size:9px;
+    letter-spacing:2px;text-transform:uppercase;
+    color:var(--ochre);font-weight:700;margin-bottom:3px;
+  }
+  .temp-cell .val{
+    font-family:'Fraunces',serif;font-weight:600;
+    font-size:24px;color:var(--bone);line-height:1.1;
+  }
+  .temp-cell .val .unit{
+    font-family:'JetBrains Mono',monospace;font-size:14px;
+    font-weight:500;color:var(--ochre);margin-left:2px;
+  }
+
+  /* TIMERS ──────────────────────────────────────────────────── */
+  .timers{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+    gap:10px;margin-top:14px;
+  }
+  .timer-btn{
+    background:var(--paper);border:2px solid var(--indigo);color:var(--indigo);
+    padding:12px 14px;border-radius:3px;
+    font-family:'JetBrains Mono',monospace;font-weight:700;
+    font-size:12px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;
+    display:flex;align-items:center;justify-content:space-between;gap:10px;
+    transition:all .15s ease;min-height:48px;
+  }
+  .timer-btn:hover{background:var(--indigo);color:var(--paper)}
+  .timer-btn:focus-visible{outline:2px solid var(--terra);outline-offset:2px}
+  .timer-btn.running{background:var(--terra);color:white;border-color:var(--terra);animation:pulse 2s ease-in-out infinite}
+  .timer-btn.done{background:var(--moss);color:white;border-color:var(--moss)}
+  .timer-btn .label-t{font-size:11px;letter-spacing:1.5px}
+  .timer-btn .countdown{font-size:14px;font-variant-numeric:tabular-nums}
+  @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(199,91,63,.4)}50%{box-shadow:0 0 0 8px rgba(199,91,63,0)}}
+
+  /* WARNINGS ────────────────────────────────────────────────── */
+  .warns{
+    background:var(--bone);border-left:3px solid var(--terra);
+    padding:18px 22px;margin:0 36px 28px;border-radius:0 3px 3px 0;
+  }
+  .warns h3{
+    font-family:'JetBrains Mono',monospace;font-size:10px;
+    letter-spacing:2.5px;text-transform:uppercase;
+    color:var(--terra);font-weight:700;margin-bottom:12px;
+  }
+  .warns ul{list-style:none;padding:0}
+  .warns li{padding:6px 0 6px 22px;position:relative;font-size:14px;line-height:1.5}
+  .warns li::before{content:"⚠";position:absolute;left:0;top:6px;color:var(--terra);font-weight:700}
+  .warns li b{color:var(--indigo);font-weight:700}
+
+  /* QUALITY ─────────────────────────────────────────────────── */
+  .quality{
+    background:linear-gradient(180deg,var(--paper) 0%,var(--bone) 100%);
+    padding:24px 36px;border-top:2px solid var(--ink);
+  }
+  .quality h2{
+    font-family:'Fraunces',serif;font-style:italic;font-size:22px;
+    color:var(--indigo);margin-bottom:14px;font-weight:500;
+  }
+  .quality h2 em{color:var(--terra)}
+  .quality-grid{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+    gap:14px;margin-top:12px;
+  }
+  .q-card{background:var(--paper);border:1px solid var(--line);border-radius:3px;padding:14px 16px}
+  .q-card .lab{
+    font-family:'JetBrains Mono',monospace;font-size:9px;
+    letter-spacing:1.5px;text-transform:uppercase;
+    color:var(--terra);font-weight:700;margin-bottom:6px;
+  }
+  .q-card p{font-size:13.5px;color:var(--ink);line-height:1.45}
+
+  /* FOOTER ──────────────────────────────────────────────────── */
+  .foot{
+    padding:18px 36px;background:var(--indigo-deep);color:var(--bone);
+    display:flex;justify-content:space-between;align-items:center;
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;letter-spacing:1.5px;text-transform:uppercase;font-weight:600;
+  }
+  .foot .ays{color:var(--ochre);font-weight:700}
+
+  /* BOTTOM ACTIONS ──────────────────────────────────────────── */
+  .actions{
+    position:fixed;bottom:0;left:0;right:0;
+    padding:12px 16px;padding-bottom:calc(12px + var(--safe-bottom));
+    background:rgba(20,27,45,.95);
+    backdrop-filter:saturate(180%) blur(8px);
+    -webkit-backdrop-filter:saturate(180%) blur(8px);
+    z-index:50;display:flex;gap:8px;justify-content:center;
+    border-top:1px solid var(--ink);
+  }
+  .action-btn{
+    background:transparent;color:var(--bone);
+    border:1px solid var(--soft);padding:10px 14px;border-radius:50px;
+    font-family:'Inter Tight',sans-serif;font-size:12px;font-weight:600;
+    letter-spacing:.8px;text-transform:uppercase;cursor:pointer;
+    min-height:44px;display:inline-flex;align-items:center;gap:6px;
+    transition:all .15s ease;
+  }
+  .action-btn:hover,.action-btn:focus-visible{background:var(--terra);border-color:var(--terra);outline:none}
+  .action-btn.primary{background:var(--terra);border-color:var(--terra)}
+  .action-btn.primary:hover{background:var(--ochre);border-color:var(--ochre);color:var(--indigo-deep)}
+
+  /* TOAST ───────────────────────────────────────────────────── */
+  .toast{
+    position:fixed;bottom:calc(80px + var(--safe-bottom));left:50%;
+    transform:translateX(-50%) translateY(20px);
+    background:var(--indigo-deep);color:var(--bone);
+    padding:12px 20px;border-radius:50px;font-size:13px;font-weight:600;
+    z-index:100;opacity:0;pointer-events:none;
+    transition:all .3s ease;box-shadow:0 4px 16px rgba(0,0,0,.3);
+    max-width:90vw;text-align:center;
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  /* RESPONSIVE ──────────────────────────────────────────────── */
+  @media(max-width:600px){
+    body{font-size:15px}
+    .home-head,.head,.section,.warns,.quality,.foot,.recipes{padding-left:18px;padding-right:18px}
+    .warns{margin-left:18px;margin-right:18px}
+    .step-num{font-size:30px;min-width:38px}
+    .section-head h2{font-size:18px}
+    .check-list li{grid-template-columns:auto 1fr;gap:10px}
+    .tag{display:none}
+    .meta-row{grid-template-columns:repeat(2,1fr)}
+    .top-row{font-size:9px}
+    .action-btn{padding:10px 12px;font-size:11px}
+    .recipes{grid-template-columns:1fr}
+  }
+
+  /* PWA install button (floating bottom-right, hidden by default) */
+  .install-fab{
+    position:fixed;right:16px;bottom:16px;z-index:1000;
+    display:none;
+    padding:12px 16px;
+    border:1px solid var(--terra);background:var(--terra);color:var(--paper);
+    border-radius:999px;font:600 13px/1 'Inter Tight',system-ui,sans-serif;
+    letter-spacing:.02em;cursor:pointer;
+    box-shadow:0 6px 18px rgba(20,27,45,.25);
+  }
+  .install-fab:hover,.install-fab:focus-visible{background:var(--ochre);border-color:var(--ochre);color:var(--indigo-deep);outline:none}
+  .install-fab.visible{display:inline-flex;align-items:center;gap:8px}
+  @supports (padding:max(0px)){
+    .install-fab{bottom:max(16px,env(safe-area-inset-bottom));right:max(16px,env(safe-area-inset-right))}
+  }
+
+  @media print{
+    body{background:white;padding:0}
+    .page{border:none;border-radius:0;background:white}
+    .topbar,.actions,.toast,.timers,.install-fab{display:none}
+    .section,.warns{break-inside:avoid;page-break-inside:avoid}
+    .cb{print-color-adjust:exact;-webkit-print-color-adjust:exact}
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+  }
+</style>
+</head>
+<body>
+
+<div id="topbar"></div>
+<div id="app"></div>
+<div id="actions"></div>
+<button type="button" id="installBtn" class="install-fab" aria-label="Installer l'application">⤓ Installer l'app</button>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(() => {
+  'use strict';
+
+  // ════════════════════════════════════════════════════════════
+  //  RECIPE DATA
+  //  Each recipe is a plain data object — add a new one to the
+  //  RECIPES dictionary and it appears on the home screen.
+  // ════════════════════════════════════════════════════════════
+
+  const RECIPES = {
+
+    moelleux: {
+      emoji: '🧁',
+      accent: '#C75B3F',
+      name: 'Mini-moelleux',
+      nameEm: 'au sirop de canne',
+      ref: 'CHK-001-v3 · Mai 2026',
+      summary: "Version revisitée : sirop de canne pur + lait frais local. À cuire à l'airfryer en moules individuels — 6 personnes au batteur sur socle.",
+      meta: [
+        { label: 'Portions', value: '6 personnes' },
+        { label: 'Moules dispo.', value: '5 unités' },
+        { label: 'Stratégie', value: '1 fournée + 1' },
+        { label: 'Préparation', value: '10 min' },
+        { label: 'Cuisson', value: '2 × 15 min' }
+      ],
+      phases: [
+        { time: '5 MIN',  name: 'Mise en place',         steps: '01 · 02',           accent: 'terra',  target: 's01' },
+        { time: '15 MIN', name: 'Préparation parallèle', steps: '03 · 04 · 05 · 06', accent: 'ochre',  target: 's03' },
+        { time: '30 MIN', name: 'Cuisson 2 fournées',    steps: '07',                accent: 'indigo', target: 's07' },
+        { time: '5 MIN',  name: 'Service',               steps: '08',                accent: 'moss',   target: 's08' }
+      ],
+      sections: [
+        {
+          num: '01', title: 'Mise en place — ingrédients', time: '5 min',
+          items: [
+            { qty: '250 ml', text: 'Sirop de canne pur (non alcoolisé)', note: 'Apporte le sucre et un parfum caractéristique de canne — remplace le lait concentré sucré', tag: 'Base liquide' },
+            { qty: '250 ml', text: 'Lait frais demi-écrémé', note: "Lait local de collecte si disponible — texture plus aérée qu'avec lait concentré", tag: 'Base liquide' },
+            { qty: '300 g',  text: 'Farine', note: 'Blé, mil ou mix 50/50 selon préférence', tag: 'Sec' },
+            { qty: '16 g',   text: 'Levure chimique saveur vanille (1,5 sachet)', note: 'La vanille est déjà incorporée — ne pas en rajouter', tag: 'Sec' },
+            { qty: '3 unités', text: 'Œufs entiers (à température ambiante)', tag: 'Frais' },
+            { qty: '90 g',   text: 'Beurre (à fondre)', tag: 'Frais' },
+            { qty: '2 pincées', text: 'Sel fin', tag: 'Sec' },
+            { text: 'Pépites de chocolat ou raisins secs', opt: 'Option', note: 'Au choix — atelier participatif', tag: 'Garniture' }
+          ]
+        },
+        {
+          num: '02', title: 'Mise en place — matériel', time: '2 min',
+          items: [
+            { text: '<b>5 moules ronds individuels</b> (compatibles airfryer)', note: 'Pour 6 personnes : prévoir 2 fournées (5 + 1)', tag: 'Cuisson' },
+            { text: '<b>Batteur sur socle avec fouets jumelés</b> + bol inox', note: 'Idéal pour émulsionner œufs+sirop, suffisant pour incorporer la farine en douceur', tag: 'Mélange' },
+            { text: '<b>Verre doseur 1000 ml/g</b> (graduations volumes + poids)', note: 'Pratique pour mesurer farine ET liquides sans balance', tag: 'Mesure' },
+            { text: '1 tamis ou passoire fine (pour la farine)', tag: 'Préparation' },
+            { text: '1 spatule maryse (récupération de pâte sur les parois du bol)', tag: 'Mélange' },
+            { text: '1 pinceau ou morceau de papier (pour beurrer les moules)', tag: 'Préparation' },
+            { text: '1 louche ou cuillère à glace (remplissage régulier des moules)', tag: 'Service' },
+            { text: '1 cure-dent ou pointe de couteau (test cuisson)', tag: 'Contrôle' }
+          ]
+        },
+        {
+          num: '03', title: 'Préparation parallèle — beurre & moules', time: '5 min',
+          callout: { variant: 'tip', label: 'Logique chef pro', text: 'Pendant que le beurre fond (2-3 min sans surveillance active), on beurre et farine les 5 moules. Gain de temps : 3 minutes.' },
+          items: [
+            { text: '<b>Lancer le beurre à fondre</b> au micro-ondes ou bain-marie', note: "Puissance moyenne, surveiller pour ne pas qu'il bout — laisser ensuite tiédir", tag: 'Action 1' },
+            { text: '<b>⏱ Pendant ce temps :</b> beurrer généreusement les 5 moules au pinceau', tag: 'Action 2' },
+            { text: "Saupoudrer chaque moule de farine, taper pour retirer l'excédent", tag: 'Action 3' },
+            { text: 'Aligner les moules sur le plan de travail, prêts à remplir', tag: 'Action 4' },
+            { text: 'Vérifier que le beurre est <b>tiède</b>, pas chaud (toucher du doigt sans gêne)', note: "Beurre trop chaud = œufs cuits dans le bol à l'étape suivante", tag: 'Contrôle' }
+          ]
+        },
+        {
+          num: '04', title: 'Préparation de la pâte au batteur', time: '4 min',
+          items: [
+            { text: 'Mesurer 250 ml de sirop de canne + 250 ml de lait frais au verre doseur', tag: 'Étape 1' },
+            { text: 'Casser les 3 œufs dans le bol du batteur, ajouter le sirop de canne', note: "Vitesse moyenne · 45 secondes — l'émulsion devient mousseuse", tag: 'Étape 2' },
+            { text: 'Verser le lait frais en filet, batteur en marche · vitesse moyenne · 20 secondes', tag: 'Étape 3' },
+            { text: 'Ajouter le beurre fondu tiédi · vitesse moyenne · 15 secondes', tag: 'Étape 4' },
+            { text: 'Tamiser farine + levure vanille + sel ensemble dans un bol à part', tag: 'Étape 5' },
+            { text: 'Incorporer le sec en 3 fois · <b>vitesse minimale</b> · 30 secondes par ajout', note: 'Vitesse minimale impérative — les fouets jumelés développent vite le gluten', tag: 'Étape 6' },
+            { text: 'Arrêter le batteur, racler les parois à la maryse, donner 5 secondes finales', tag: 'Étape 7' },
+            { text: 'Ajouter pépites / raisins à la spatule, hors batteur', opt: 'Option', tag: 'Étape 8' }
+          ]
+        },
+        {
+          num: '05', title: 'Test de consistance — point de contrôle', time: '1 min',
+          variant: 'tip', numClass: 'moss', timeVariant: 'moss',
+          callout: { variant: 'warn', label: 'Pourquoi cette étape', text: "Avec sirop de canne + lait frais, la pâte peut être plus liquide qu'attendu. <b>Mieux vaut corriger maintenant qu'avoir des moelleux ratés à la sortie de l'airfryer.</b>" },
+          items: [
+            { text: '<b>Test du ruban :</b> soulever la louche, la pâte doit retomber en ruban épais qui marque la surface 2-3 secondes', note: '✅ Ruban visible 2-3 sec = bonne consistance · ❌ Ruban disparaît immédiatement = trop liquide', tag: 'Diagnostic' },
+            { text: 'Si pâte conforme : continuer directement à la section 06', tag: '✅ OK' },
+            { text: 'Si pâte trop liquide : appliquer le protocole de rattrapage', note: 'Voir section "Diagnostic & rattrapage" en bas du document — Solution 2 (repos 15 min) résout 80% des cas', tag: '⚠ Action' }
+          ]
+        },
+        {
+          num: '06', title: 'Remplissage des moules + préchauffage', time: '5 min',
+          callout: { variant: 'tip', label: 'Logique chef pro', text: "Préchauffage lancé maintenant (et non au début) : économie d'énergie, et l'airfryer atteint sa température exactement quand les moules sont prêts à entrer." },
+          items: [
+            { text: '<b>Lancer le préchauffage airfryer</b> : 160°C · 3 min', note: 'Vérifier au préalable que le panier est propre et sec', tag: 'Action 1' },
+            { text: '<b>⏱ Pendant ce temps :</b> remplir chaque moule aux <b>2/3 maximum</b> à la louche', note: 'Au-delà, ça déborde à la cuisson — la pâte au sirop de canne gonfle bien', tag: 'Critique' },
+            { text: '<b>Réserver le reste de pâte couvert au frais</b> pour la 2ᵉ fournée', note: 'Maximum 30 min — la levure perd son efficacité au-delà', tag: 'Stratégie' },
+            { text: "Tapoter chaque moule sur le plan de travail (chasser les bulles d'air)", tag: 'Finition' }
+          ]
+        },
+        {
+          num: '07', title: 'Cuisson en 2 fournées', time: '2 × 15 min',
+          tempBlock: [
+            { lab: 'Température',          val: '160',   unit: '°C' },
+            { lab: 'Fournée 1 (5 moules)', val: '15-18', unit: 'min' },
+            { lab: 'Fournée 2 (1 moule)',  val: '12-14', unit: 'min' }
+          ],
+          timers: [
+            { seconds: 900, label: 'Fournée 1' },
+            { seconds: 720, label: 'Contrôle 12 min' },
+            { seconds: 780, label: 'Fournée 2' }
+          ],
+          items: [
+            { text: '<b>Fournée 1 :</b> Disposer les 5 moules dans le panier (espacés)', tag: 'Étape 1' },
+            { text: 'Lancer la cuisson : 160°C pendant 15 minutes', tag: 'Étape 2' },
+            { text: 'À 12 min : vérifier la coloration (dorée, pas brune)', note: "Si trop foncé : couvrir d'un papier alu pour les 5 dernières min", tag: 'Contrôle' },
+            { text: 'À 15 min : test du cure-dent au centre', note: 'Doit ressortir sec ou avec quelques miettes — pas de pâte liquide', tag: 'Contrôle' },
+            { text: 'Sortir la fournée 1, démouler 1 moule rapidement (le laisser tiédir à part)', tag: 'Transition' },
+            { text: '<b>Fournée 2 :</b> Beurrer-fariner le moule libre, le remplir avec la pâte réservée', note: 'Le panier étant déjà chaud : pas de préchauffage nécessaire, réduire la cuisson de 2-3 min', tag: 'Étape 6' },
+            { text: 'Cuire le 6ᵉ moelleux : 160°C · 12-14 min · contrôle au cure-dent', tag: 'Étape 7' }
+          ]
+        },
+        {
+          num: '08', title: 'Démoulage et service', time: '5 min',
+          items: [
+            { text: 'Sortir les moules avec une pince ou un gant (très chaud)', tag: 'Sécurité' },
+            { text: 'Laisser tiédir <b>5 minutes minimum</b> dans les moules', note: 'Démouler trop tôt = moelleux qui casse', tag: 'Critique' },
+            { text: 'Passer une lame fine autour de chaque moelleux', tag: 'Étape 3' },
+            { text: 'Retourner sur une grille pour démouler', tag: 'Étape 4' },
+            { text: 'Servir tiède ou laisser refroidir complètement', note: 'Conservation 48h à température ambiante, dans une boîte hermétique', tag: 'Service' }
+          ]
+        },
+        {
+          num: '⚠', anchor: 'sos',
+          title: 'Diagnostic & rattrapage — pâte trop liquide',
+          time: 'SOS', timeVariant: 'terra', variant: 'sos', numClass: 'warn',
+          intro: "La consistance idéale ressemble à une pâte à crêpes épaisse : elle coule lentement de la louche en un ruban continu. Si elle est plus liquide, voici le protocole.",
+          groups: [
+            {
+              heading: 'Test visuel rapide',
+              items: [
+                { text: '<b>Test du ruban :</b> soulever la louche, la pâte doit retomber en un ruban épais qui marque la surface 2-3 secondes avant de se résorber', note: 'Si elle disparaît immédiatement = trop liquide. Si elle ne coule pas = trop épaisse.', tag: 'Diagnostic' },
+                { text: '<b>Test du dos de cuillère :</b> tremper le dos d\'une cuillère, la pâte doit y adhérer et former une couche visible', note: 'Si la cuillère ressort presque propre = pâte trop liquide', tag: 'Diagnostic' }
+              ]
+            },
+            {
+              heading: 'Solution 1 — Ajout progressif de farine',
+              badge: { text: 'RECOMMANDÉ' },
+              items: [
+                { text: 'Ajouter <b>1 cuillère à soupe de farine tamisée</b> (≈ 10 g)', note: "Toujours par petites doses, jamais d'un coup", tag: 'Étape 1' },
+                { text: 'Mélanger au batteur · vitesse minimale · 15 secondes', tag: 'Étape 2' },
+                { text: 'Refaire le test du ruban', tag: 'Étape 3' },
+                { text: 'Si encore trop liquide : répéter (max 3 cuillères, soit 30 g)', note: 'Au-delà : déséquilibre — la pâte devient trop dense', tag: 'Limite' },
+                { text: '<b>Compenser la levure</b> si plus de 2 c. à soupe ajoutées : ½ c. à café supplémentaire', tag: 'Ajustement' }
+              ]
+            },
+            {
+              heading: 'Solution 2 — Repos au frais',
+              items: [
+                { text: 'Couvrir le bol et placer au réfrigérateur <b>15 à 20 minutes</b>', note: 'La farine absorbe progressivement les liquides, la pâte épaissit naturellement', tag: 'Méthode douce' },
+                { text: 'Refaire le test du ruban après repos', tag: 'Contrôle' },
+                { text: 'Si toujours trop liquide : combiner avec Solution 1', tag: 'Combinaison' }
+              ]
+            },
+            {
+              heading: 'Solution 3 — Ajustement cuisson',
+              badge: { text: 'DERNIER RECOURS', variant: 'ochre' },
+              items: [
+                { text: 'Si la pâte est légèrement liquide mais correcte : remplir aux <b>1/2 seulement</b> (au lieu de 2/3)', note: 'Évite le débordement à la cuisson', tag: 'Étape 1' },
+                { text: 'Démarrer la cuisson à <b>150°C</b> au lieu de 160°C pour les 5 premières minutes', tag: 'Étape 2' },
+                { text: 'Remonter à 160°C ensuite, prolonger de 3 à 5 min la cuisson totale', tag: 'Étape 3' },
+                { text: 'Test du cure-dent obligatoire — la pâte liquide met plus de temps à cuire à cœur', tag: 'Critique' }
+              ]
+            }
+          ],
+          callouts: [
+            { variant: 'dark', label: 'Cause probable du problème', text: "Le sirop de canne et le lait frais sont plus fluides que le lait concentré. Si la pâte semble trop liquide, c'est généralement parce que <b>la farine n'a pas encore fini d'absorber les liquides</b> — la Solution 2 (repos au frais 15 min) résout 80% des cas sans modifier la recette." },
+            { variant: 'note', label: 'Pour la prochaine fois', text: "Notez la quantité de farine ajoutée et reportez-la dans une éventuelle CHK-001-v4 pour calibrer définitivement la recette à votre cuisine, votre humidité ambiante et votre marque de farine." }
+          ]
+        }
+      ],
+      warnings: [
+        { bold: 'Sirop de canne ≠ rhum :', text: 'bien vérifier que le produit est non alcoolisé (mention "pur sirop de canne, sucre 100% pur canne" sur l\'étiquette).' },
+        { bold: 'Ne jamais dépasser 180°C :', text: 'le sirop de canne caramélise très vite. Le dessus brûle et le centre reste cru.' },
+        { bold: 'Pâte plus liquide qu\'avec lait concentré :', text: 'normal, sirop + lait frais sont moins denses. Bien remplir aux 2/3 stricts pour éviter le débordement.' },
+        { bold: 'Beurre fondu trop chaud :', text: 'coagule les œufs et casse l\'émulsion. Toujours laisser tiédir 2-3 min avant incorporation.' },
+        { bold: 'Batteur à fouets jumelés sur la farine :', text: 'vitesse minimale impérative, par petites quantités. Sinon mie compacte et dense.' },
+        { bold: 'Pâte réservée trop longtemps :', text: 'la levure chimique perd son efficacité après 30 min hors froid. Pâte au frigo entre les 2 fournées.' },
+        { bold: 'Ouvrir trop tôt :', text: 'chute de température = mie qui retombe. Attendre 12 min avant le premier contrôle visuel.' }
+      ],
+      quality: [
+        { label: 'Aspect',  text: 'Dôme régulier, surface dorée et légèrement craquelée' },
+        { label: 'Texture', text: 'Mie aérée, moelleuse, légère résistance sous la dent' },
+        { label: 'Couleur', text: 'Doré uniforme — ni pâle (cru), ni foncé (trop cuit)' },
+        { label: 'Goût',    text: 'Doux, lacté, légèrement caramélisé en surface' }
+      ]
+    },
+
+    crepes: {
+      emoji: '🥞',
+      accent: '#D4A04C',
+      name: 'Crêpes sucrées',
+      nameEm: 'classiques',
+      ref: 'CHK-002-v1 · 2026',
+      summary: "Pâte à crêpes traditionnelle avec repos d'1 h pour la souplesse — 12 crêpes pour 4 personnes. Pâte parfumable au choix.",
+      meta: [
+        { label: 'Crêpes',      value: '12 unités' },
+        { label: 'Personnes',   value: '4' },
+        { label: 'Préparation', value: '10 min' },
+        { label: 'Repos',       value: '1 h' },
+        { label: 'Cuisson',     value: '~2 min/crêpe' }
+      ],
+      phases: [
+        { time: '5 MIN',  name: 'Mise en place',     steps: '01 · 02', accent: 'terra',  target: 's01' },
+        { time: '5 MIN',  name: 'Mélange de la pâte', steps: '03',     accent: 'ochre',  target: 's03' },
+        { time: '60 MIN', name: 'Repos',             steps: '04',      accent: 'indigo', target: 's04' },
+        { time: '25 MIN', name: 'Cuisson & service', steps: '05 · 06', accent: 'moss',   target: 's05' }
+      ],
+      sections: [
+        {
+          num: '01', title: 'Ingrédients', time: '3 min',
+          items: [
+            { qty: '250 g',  text: 'Farine T55', tag: 'Sec' },
+            { qty: '4',      text: 'Œufs entiers (température ambiante)', tag: 'Frais' },
+            { qty: '500 ml', text: 'Lait demi-écrémé', tag: 'Liquide' },
+            { qty: '50 g',   text: 'Beurre fondu (refroidi)', tag: 'Frais' },
+            { qty: '30 g',   text: 'Sucre', tag: 'Sec' },
+            { qty: '1 pincée', text: 'Sel fin', tag: 'Sec' },
+            { qty: '1 c.s.', text: "Rhum, fleur d'oranger ou extrait de vanille", opt: 'Option', note: 'Pour parfumer la pâte', tag: 'Aromate' }
+          ]
+        },
+        {
+          num: '02', title: 'Matériel', time: '2 min',
+          items: [
+            { text: '<b>Poêle à crêpes 24-26 cm</b> antiadhésive', tag: 'Cuisson' },
+            { text: 'Saladier ou cul-de-poule de bonne taille', tag: 'Mélange' },
+            { text: 'Fouet manuel ou mixeur plongeant', note: 'Le mixeur évite les grumeaux en 30 secondes', tag: 'Mélange' },
+            { text: 'Louche (≈ 80 ml)', tag: 'Service' },
+            { text: 'Spatule fine ou crêpière', tag: 'Cuisson' },
+            { text: 'Papier absorbant + huile neutre (graissage poêle)', tag: 'Cuisson' }
+          ]
+        },
+        {
+          num: '03', title: 'Préparation de la pâte', time: '5 min',
+          callout: { variant: 'tip', label: 'Astuce anti-grumeaux', text: "Faire un puits dans la farine et ajouter les œufs au centre. Mélanger en partant du centre vers l'extérieur — la farine s'incorpore progressivement sans grumeaux." },
+          items: [
+            { text: 'Verser farine + sucre + sel dans le saladier, faire un puits au centre', tag: 'Étape 1' },
+            { text: 'Casser les œufs dans le puits, mélanger au fouet en partant du centre', tag: 'Étape 2' },
+            { text: 'Verser le lait <b>en filet</b>, en continuant de fouetter', note: 'Si grumeaux persistants : passer 30 sec au mixeur plongeant', tag: 'Étape 3' },
+            { text: 'Ajouter le beurre fondu tiédi, fouetter pour homogénéiser', tag: 'Étape 4' },
+            { text: 'Parfumer (rhum / fleur d\'oranger / vanille) si souhaité', opt: 'Option', tag: 'Étape 5' }
+          ]
+        },
+        {
+          num: '04', title: 'Repos de la pâte', time: '1 h', variant: 'tip',
+          callout: { variant: 'warn', label: 'Étape essentielle', text: "Le repos hydrate les grains de farine : <b>la pâte devient souple et les crêpes sont plus fines.</b> Sauter cette étape donne des crêpes cassantes." },
+          timers: [ { seconds: 3600, label: 'Repos 1 h' } ],
+          items: [
+            { text: "Couvrir le saladier d'un linge ou film alimentaire", note: 'Température ambiante, pas au frigo (sinon le beurre fige)', tag: 'Préparation' },
+            { text: 'Laisser reposer <b>1 heure minimum</b>', tag: 'Critique' },
+            { text: 'Avant cuisson : fouetter rapidement pour réincorporer', note: 'Si pâte trop épaisse après repos : ajouter un peu de lait', tag: 'Reprise' }
+          ]
+        },
+        {
+          num: '05', title: 'Cuisson des crêpes', time: '20 min',
+          tempBlock: [
+            { lab: 'Feu',      val: 'Moyen',  unit: '+' },
+            { lab: 'Par face', val: '60',     unit: 'sec' },
+            { lab: 'Quantité', val: '1',      unit: 'louche' }
+          ],
+          items: [
+            { text: 'Chauffer la poêle <b>à feu moyen-vif</b> pendant 2 min', note: 'La poêle doit être chaude avant la première crêpe', tag: 'Étape 1' },
+            { text: 'Huiler légèrement avec papier absorbant imbibé', tag: 'Étape 2' },
+            { text: '<b>Verser une louche</b>, faire pivoter la poêle pour étaler', note: 'Geste rapide — la pâte fige en 5 secondes', tag: 'Étape 3' },
+            { text: 'Cuire ~1 min jusqu\'à coloration des bords', tag: 'Étape 4' },
+            { text: 'Décoller à la spatule, retourner', tag: 'Geste' },
+            { text: "Cuire l'autre face 30-45 sec", tag: 'Étape 6' },
+            { text: "Empiler sur une assiette, couvrir d'un torchon (garde au chaud)", tag: 'Service' }
+          ]
+        },
+        {
+          num: '06', title: 'Service', time: '5 min',
+          items: [
+            { text: 'Servir tièdes avec garniture au choix', note: 'Sucre, citron, confiture, Nutella, chantilly, fruits frais...', tag: 'Service' },
+            { text: 'Conservation : 2 jours au frigo, recouvertes de film', tag: 'Stockage' },
+            { text: 'Réchauffage : 20 sec au micro-ondes ou poêle sèche 30 sec', tag: 'Stockage' }
+          ]
+        }
+      ],
+      warnings: [
+        { bold: 'Pâte trop épaisse :', text: 'détendre avec un peu de lait juste avant cuisson, jamais d\'eau.' },
+        { bold: 'Première crêpe ratée :', text: 'normal — c\'est elle qui calibre la poêle. Ne pas s\'inquiéter.' },
+        { bold: 'Crêpes qui collent :', text: "la poêle n'est pas assez chaude OU pas assez huilée. Tester avec une goutte d'eau qui doit grésiller." },
+        { bold: 'Pâte avec grumeaux :', text: 'passer au mixeur plongeant 30 secondes ou filtrer au tamis.' },
+        { bold: 'Repos sauté :', text: 'crêpes plus épaisses et cassantes — la patience paie ici.' }
+      ],
+      quality: [
+        { label: 'Aspect',  text: 'Crêpe fine, souple, non cassante' },
+        { label: 'Texture', text: 'Légèrement élastique, pliable sans déchirer' },
+        { label: 'Couleur', text: 'Doré tacheté de brun, ni pâle ni brûlé' },
+        { label: 'Goût',    text: "Lait, beurre, parfum subtil de l'aromate choisi" }
+      ]
+    },
+
+    flan: {
+      emoji: '🍮',
+      accent: '#5C7361',
+      name: 'Flan pâtissier',
+      nameEm: 'à la vanille',
+      ref: 'CHK-003-v1 · 2026',
+      summary: "Le flan classique de boulangerie : appareil onctueux à la vanille sur pâte brisée croustillante. 8 parts, moule 22 cm.",
+      meta: [
+        { label: 'Parts',           value: '8' },
+        { label: 'Moule',           value: '22 cm' },
+        { label: 'Préparation',     value: '20 min' },
+        { label: 'Cuisson',         value: '40-50 min' },
+        { label: 'Refroidissement', value: '4 h min.' }
+      ],
+      phases: [
+        { time: '10 MIN', name: 'Pâte',                steps: '01 · 02', accent: 'terra',  target: 's01' },
+        { time: '20 MIN', name: 'Appareil',            steps: '03 · 04', accent: 'ochre',  target: 's03' },
+        { time: '50 MIN', name: 'Cuisson',             steps: '05',      accent: 'indigo', target: 's05' },
+        { time: '4 H',    name: 'Repos & démoulage',   steps: '06',      accent: 'moss',   target: 's06' }
+      ],
+      sections: [
+        {
+          num: '01', title: 'Ingrédients — pâte brisée', time: '3 min',
+          items: [
+            { qty: '250 g',  text: 'Farine T55', tag: 'Sec' },
+            { qty: '125 g',  text: 'Beurre froid en cubes', tag: 'Frais' },
+            { qty: '50 g',   text: 'Sucre glace', tag: 'Sec' },
+            { qty: '1',      text: 'Œuf entier', tag: 'Frais' },
+            { qty: '1 pincée', text: 'Sel fin', tag: 'Sec' },
+            { text: 'Pâte brisée du commerce (1 rouleau 230 g)', opt: 'Raccourci', note: 'Si pas le temps de la faire maison', tag: 'Alternative' }
+          ]
+        },
+        {
+          num: '02', title: 'Ingrédients — appareil', time: '2 min',
+          items: [
+            { qty: '1 L',    text: 'Lait entier', note: "Le lait entier donne l'onctuosité — éviter le demi-écrémé", tag: 'Liquide' },
+            { qty: '6',      text: 'Œufs entiers (ou 4 œufs + 4 jaunes pour plus de richesse)', tag: 'Frais' },
+            { qty: '200 g',  text: 'Sucre en poudre', tag: 'Sec' },
+            { qty: '90 g',   text: 'Maïzena (fécule de maïs)', note: 'Donne la texture flan — ne pas remplacer par farine', tag: 'Sec' },
+            { qty: '2',      text: 'Gousses de vanille (ou 1 c.c. extrait + 1 c.c. arôme)', tag: 'Aromate' },
+            { qty: '20 g',   text: "Beurre (pour finir l'appareil)", tag: 'Frais' }
+          ]
+        },
+        {
+          num: '03', title: 'Foncer le moule', time: '5 min',
+          callout: { variant: 'tip', label: 'Choix du moule', text: "Moule à manqué hauteur ≥ 5 cm, ou cercle à entremets de 22 cm sur plaque chemisée. Bord haut indispensable car l'appareil monte à la cuisson." },
+          items: [
+            { text: 'Beurrer généreusement le moule', tag: 'Préparation' },
+            { text: "Étaler la pâte sur 3 mm d'épaisseur", note: 'Sur plan fariné, ou entre 2 feuilles de papier sulfurisé', tag: 'Étape 2' },
+            { text: '<b>Foncer le moule</b> en remontant bien sur les bords', tag: 'Critique' },
+            { text: 'Piquer le fond à la fourchette', note: 'Évite que la pâte gonfle à la cuisson', tag: 'Étape 4' },
+            { text: "Réserver au frigo pendant la préparation de l'appareil", tag: 'Repos' }
+          ]
+        },
+        {
+          num: '04', title: "Préparation de l'appareil", time: '15 min',
+          callout: { variant: 'warn', label: 'Technique crème pâtissière', text: "C'est en réalité une crème pâtissière épaisse. <b>Ne jamais arrêter de fouetter</b> sur le feu, sinon ça brûle au fond." },
+          items: [
+            { text: 'Fendre les gousses de vanille, gratter les graines', tag: 'Étape 1' },
+            { text: "Faire chauffer le lait + gousses + graines de vanille jusqu'à frémissement", note: 'Couper le feu, laisser infuser 5 min', tag: 'Étape 2' },
+            { text: '<b>En parallèle :</b> blanchir œufs + sucre au fouet (1-2 min)', tag: 'Étape 3' },
+            { text: 'Ajouter la maïzena, fouetter pour incorporer sans grumeaux', tag: 'Étape 4' },
+            { text: 'Verser <b>1/3 du lait chaud</b> sur le mélange œufs en fouettant', note: "Détend l'appareil et évite la coagulation des œufs", tag: 'Étape 5' },
+            { text: 'Reverser le tout dans la casserole, remettre sur feu moyen', tag: 'Étape 6' },
+            { text: "<b>Fouetter sans arrêt</b> 3-5 min jusqu'à épaississement", tag: 'Critique' },
+            { text: 'Hors du feu : ajouter le beurre, fouetter pour lisser', tag: 'Étape 8' }
+          ]
+        },
+        {
+          num: '05', title: 'Montage et cuisson', time: '50 min',
+          tempBlock: [
+            { lab: 'Température', val: '180',   unit: '°C' },
+            { lab: 'Cuisson',     val: '40-50', unit: 'min' },
+            { lab: 'Position',    val: 'Bas',   unit: 'four' }
+          ],
+          timers: [
+            { seconds: 2400, label: 'Cuisson 40 min' },
+            { seconds: 3000, label: 'Cuisson 50 min' }
+          ],
+          items: [
+            { text: 'Préchauffer le four à <b>180°C chaleur tournante</b>', tag: 'Étape 1' },
+            { text: "Sortir le moule du frigo, retirer les gousses de vanille de l'appareil", tag: 'Étape 2' },
+            { text: "Verser l'appareil chaud sur la pâte foncée", note: 'Verser au centre, ne pas remplir au-delà du bord du moule', tag: 'Étape 3' },
+            { text: 'Lisser la surface à la spatule', tag: 'Étape 4' },
+            { text: 'Enfourner <b>40 minutes</b>, surveiller à 35 min', tag: 'Étape 5' },
+            { text: 'La surface doit être <b>très dorée, presque brûlée par endroits</b>', note: 'C\'est ce qui donne le goût caramélisé caractéristique', tag: 'Visuel' },
+            { text: 'Si pas assez doré à 45 min : monter à 200°C les 5 dernières min', tag: 'Ajustement' }
+          ]
+        },
+        {
+          num: '06', title: 'Repos et service', time: '4 h',
+          callout: { variant: 'warn', label: 'Patience requise', text: "Le flan doit refroidir <b>complètement avant démoulage</b>, sinon l'appareil n'est pas pris et le flan s'écroule. 4 h minimum, idéalement une nuit au frigo." },
+          items: [
+            { text: 'Sortir du four, laisser tiédir 30 min à température ambiante', tag: 'Étape 1' },
+            { text: 'Placer au frigo <b>4 heures minimum</b> (idéal : nuit complète)', tag: 'Critique' },
+            { text: 'Démouler froid, sur plat de service', tag: 'Étape 3' },
+            { text: 'Servir frais, sans accompagnement', note: 'Le flan se suffit à lui-même', tag: 'Service' },
+            { text: 'Conservation : 3 jours au frigo, sous cloche ou film', tag: 'Stockage' }
+          ]
+        }
+      ],
+      warnings: [
+        { bold: 'Pâte qui rétrécit :', text: "la pâte n'a pas reposé. Toujours laisser 30 min minimum au frigo après foncage." },
+        { bold: 'Appareil qui granule :', text: "la maïzena n'a pas cuit assez longtemps. Continuer à fouetter sur feu moyen 1-2 min de plus jusqu'à texture lisse." },
+        { bold: 'Surface peu dorée :', text: 'four pas assez chaud. Finir 5-10 min sous le grill en surveillant chaque minute.' },
+        { bold: 'Démoulage raté :', text: 'flan pas assez froid. Replacer 2 h au frigo et réessayer.' },
+        { bold: 'Bulles à la surface :', text: 'fouet utilisé trop énergiquement à la fin. Lisser à la spatule avant cuisson.' }
+      ],
+      quality: [
+        { label: 'Aspect',  text: 'Surface bien dorée, presque caramélisée par endroits' },
+        { label: 'Texture', text: 'Appareil ferme mais fondant, ni gélifié ni liquide' },
+        { label: 'Pâte',    text: 'Croustillante en dessous, pas détrempée' },
+        { label: 'Goût',    text: 'Vanille présente, équilibre sucre / lait, finition caramélisée' }
+      ]
+    },
+
+    tiramisu: {
+      emoji: '🍰',
+      accent: '#6B4423',
+      name: 'Tiramisu',
+      nameEm: 'classique italien',
+      ref: 'CHK-004-v1 · 2026',
+      summary: "Le tiramisu de référence : mascarpone, œufs séparés, biscuits cuillère imbibés au café. 6 personnes, repos 4 h minimum.",
+      meta: [
+        { label: 'Personnes',  value: '6' },
+        { label: 'Plat',       value: '20 × 30 cm' },
+        { label: 'Préparation', value: '25 min' },
+        { label: 'Repos',      value: '4 h min.' },
+        { label: 'Cuisson',    value: 'aucune' }
+      ],
+      phases: [
+        { time: '5 MIN',  name: 'Mise en place',          steps: '01 · 02', accent: 'terra',  target: 's01' },
+        { time: '15 MIN', name: 'Crème mascarpone',       steps: '03 · 04', accent: 'ochre',  target: 's03' },
+        { time: '10 MIN', name: 'Trempage & montage',     steps: '05',      accent: 'indigo', target: 's05' },
+        { time: '4 H',    name: 'Repos & service',        steps: '06 · 07', accent: 'moss',   target: 's06' }
+      ],
+      sections: [
+        {
+          num: '01', title: 'Ingrédients', time: '3 min',
+          items: [
+            { qty: '250 g',  text: 'Mascarpone (à température ambiante)', note: 'Sortir 30 min avant pour éviter les grumeaux', tag: 'Frais' },
+            { qty: '3',      text: 'Œufs entiers (extra-frais, jaunes + blancs séparés)', note: 'Œufs crus : utiliser des œufs très frais ou pasteurisés', tag: 'Frais' },
+            { qty: '80 g',   text: 'Sucre en poudre', tag: 'Sec' },
+            { qty: '24',     text: "Biscuits cuillère (boudoirs ou savoiardi italiens)", tag: 'Sec' },
+            { qty: '300 ml', text: 'Café fort refroidi (espresso allongé)', note: 'À préparer en avance pour qu\'il soit froid au montage', tag: 'Liquide' },
+            { qty: '30 ml',  text: 'Marsala, amaretto ou rhum brun', opt: 'Option', note: "À ajouter au café — l'alcool s'évapore au repos", tag: 'Aromate' },
+            { text: 'Cacao amer en poudre (pour saupoudrage)', tag: 'Finition' },
+            { qty: '1 pincée', text: 'Sel fin (pour stabiliser les blancs)', tag: 'Sec' }
+          ]
+        },
+        {
+          num: '02', title: 'Matériel', time: '2 min',
+          items: [
+            { text: '<b>Plat rectangulaire 20 × 30 cm</b> ou 6 verrines individuelles', tag: 'Service' },
+            { text: '<b>2 culs-de-poule</b> (un pour les blancs, un pour les jaunes)', note: "Le bol des blancs doit être parfaitement propre et sec", tag: 'Mélange' },
+            { text: 'Batteur électrique avec fouets', tag: 'Mélange' },
+            { text: 'Spatule maryse (pour le pliage)', tag: 'Mélange' },
+            { text: 'Tamis fin ou petite passoire (pour le cacao)', tag: 'Finition' },
+            { text: 'Assiette creuse ou bol large (pour tremper les biscuits)', tag: 'Montage' }
+          ]
+        },
+        {
+          num: '03', title: 'Préparation du café et séparation des œufs', time: '5 min',
+          callout: { variant: 'tip', label: 'Anticipation', text: 'Préparer le café <b>au moins 30 min avant</b> pour qu\'il soit complètement froid au moment du trempage. Un café tiède détrempe les biscuits qui se cassent.' },
+          items: [
+            { text: 'Préparer 300 ml de café fort, le verser dans une assiette creuse', tag: 'Étape 1' },
+            { text: 'Ajouter le marsala / amaretto au café si souhaité', opt: 'Option', tag: 'Étape 2' },
+            { text: 'Laisser refroidir complètement (frigo si pressé)', tag: 'Critique' },
+            { text: '<b>Séparer les œufs proprement :</b> aucune trace de jaune dans les blancs', note: "Sinon les blancs ne monteront pas. Casser chaque œuf au-dessus d\'un petit bol avant de transférer", tag: 'Étape 4' },
+            { text: 'Mettre les jaunes dans un bol, les blancs dans le second cul-de-poule', tag: 'Étape 5' }
+          ]
+        },
+        {
+          num: '04', title: 'Crème mascarpone', time: '10 min',
+          callout: { variant: 'warn', label: 'Technique du pliage', text: "Les blancs doivent être incorporés <b>en pliant délicatement à la maryse</b>, jamais au fouet. L'objectif : préserver l'air pour une crème légère. Mouvements de bas en haut, du centre vers l'extérieur." },
+          items: [
+            { text: '<b>Blanchir les jaunes</b> avec 60 g de sucre au batteur, vitesse moyenne, 3 min', note: "Le mélange doit doubler de volume et devenir jaune pâle, mousseux", tag: 'Étape 1' },
+            { text: 'Ajouter le mascarpone aux jaunes blanchis, fouetter doucement jusqu\'à crème lisse', note: "Vitesse minimale, sinon la crème se grumelle", tag: 'Étape 2' },
+            { text: '<b>Monter les blancs en neige ferme</b> avec une pincée de sel', note: 'Commencer vitesse moyenne, finir vitesse max. Bec d\'oiseau ferme = prêt', tag: 'Étape 3' },
+            { text: 'Serrer les blancs avec les 20 g de sucre restants en fin de montage', tag: 'Étape 4' },
+            { text: 'Incorporer <b>1/3 des blancs</b> à la crème mascarpone au fouet (détend l\'appareil)', tag: 'Étape 5' },
+            { text: '<b>Plier le reste des blancs à la maryse</b> en 2-3 fois, mouvements amples', note: 'Arrêter dès que le mélange est homogène — surmélange = crème qui retombe', tag: 'Critique' }
+          ]
+        },
+        {
+          num: '05', title: 'Trempage et montage', time: '10 min',
+          callout: { variant: 'tip', label: 'Le bon trempage', text: "<b>1 seconde par face suffit</b>, pas plus. Les boudoirs absorbent vite. Trop trempés = montage qui s'affaisse, biscuits qui se désagrègent." },
+          items: [
+            { text: '<b>1ʳᵉ couche :</b> tremper rapidement chaque biscuit (1 sec/face) et tapisser le fond du plat', tag: 'Étape 1' },
+            { text: 'Couvrir d\'<b>une moitié de la crème mascarpone</b>, lisser à la spatule', tag: 'Étape 2' },
+            { text: '<b>2ᵉ couche :</b> répéter avec biscuits trempés', tag: 'Étape 3' },
+            { text: 'Couvrir avec le reste de crème, lisser parfaitement', tag: 'Étape 4' },
+            { text: 'Tapoter le plat sur le plan de travail (chasser bulles d\'air)', tag: 'Finition' },
+            { text: '<b>NE PAS saupoudrer le cacao maintenant</b>', note: "Le cacao s'humidifie pendant le repos et perd son aspect — saupoudrage juste avant service", tag: 'Critique' }
+          ]
+        },
+        {
+          num: '06', title: 'Repos au frigo', time: '4 h',
+          timers: [
+            { seconds: 14400, label: 'Repos 4 h' },
+            { seconds: 21600, label: 'Repos 6 h (idéal)' }
+          ],
+          callout: { variant: 'warn', label: 'Patience essentielle', text: "Le tiramisu a besoin de temps pour que <b>les saveurs se développent et la crème se raffermisse</b>. 4 h minimum, idéalement 6-8 h ou une nuit." },
+          items: [
+            { text: 'Couvrir le plat de film alimentaire au contact', note: 'Évite que la crème prenne les odeurs du frigo', tag: 'Préparation' },
+            { text: 'Placer au frigo <b>4 h minimum</b> (idéal : nuit complète)', tag: 'Critique' },
+            { text: 'Vérifier la prise au bout de 4 h : la crème doit être ferme au toucher', tag: 'Contrôle' }
+          ]
+        },
+        {
+          num: '07', title: 'Service', time: '2 min',
+          items: [
+            { text: '<b>Juste avant de servir :</b> saupoudrer généreusement de cacao au tamis fin', note: 'Couvrir toute la surface, mouvement régulier de gauche à droite', tag: 'Critique' },
+            { text: 'Découper en parts à la cuillère ou avec un couteau humidifié', tag: 'Service' },
+            { text: 'Servir frais, jamais à température ambiante', tag: 'Service' },
+            { text: 'Conservation : 48 h au frigo (au-delà, les biscuits ramollissent trop)', tag: 'Stockage' }
+          ]
+        }
+      ],
+      warnings: [
+        { bold: 'Œufs crus :', text: "utiliser exclusivement des œufs extra-frais (date de ponte ≤ 9 jours) ou des œufs pasteurisés. Éviter pour femmes enceintes, jeunes enfants et personnes immunodéprimées." },
+        { bold: 'Mascarpone froid :', text: 'crée des grumeaux au mélange. Le sortir 30 min avant utilisation.' },
+        { bold: 'Blancs qui ne montent pas :', text: 'présence de jaune ou bol gras. Recommencer dans un bol propre. Le sel aide à stabiliser.' },
+        { bold: 'Crème qui retombe :', text: "surmélange au pliage. Plier juste assez pour homogénéiser, pas plus." },
+        { bold: 'Biscuits détrempés :', text: 'trempage trop long. 1 seconde par face suffit, jamais plus.' },
+        { bold: 'Cacao saupoudré trop tôt :', text: 'devient pâteux et perd son aspect. Toujours juste avant service.' }
+      ],
+      quality: [
+        { label: 'Aspect',  text: 'Couches nettes visibles à la coupe, surface uniforme cacaotée' },
+        { label: 'Texture', text: 'Crème ferme mais fondante, biscuits moelleux non détrempés' },
+        { label: 'Couleur', text: "Crème ivoire, cacao brun foncé brillant" },
+        { label: 'Goût',    text: 'Café présent, mascarpone onctueux, équilibre sucré-amer' }
+      ]
+    },
+
+    cookies: {
+      emoji: '🍪',
+      accent: '#D4A04C',
+      name: 'Cookies',
+      nameEm: 'aux pépites de chocolat',
+      ref: 'CHK-005-v1 · 2026',
+      summary: "Le grand classique américain : croquant aux bords, moelleux au centre, généreux en pépites. 12 cookies pour 4-6 personnes.",
+      meta: [
+        { label: 'Cookies',     value: '12 unités' },
+        { label: 'Personnes',   value: '4-6' },
+        { label: 'Préparation', value: '10 min' },
+        { label: 'Repos pâte',  value: '30 min (recommandé)' },
+        { label: 'Cuisson',     value: '12 min' }
+      ],
+      phases: [
+        { time: '3 MIN',  name: 'Mise en place',     steps: '01 · 02', accent: 'terra',  target: 's01' },
+        { time: '7 MIN',  name: 'Mélange pâte',      steps: '03',      accent: 'ochre',  target: 's03' },
+        { time: '30 MIN', name: 'Repos (option)',    steps: '04',      accent: 'indigo', target: 's04' },
+        { time: '15 MIN', name: 'Façonnage & cuisson', steps: '05 · 06', accent: 'moss', target: 's05' }
+      ],
+      sections: [
+        {
+          num: '01', title: 'Ingrédients', time: '2 min',
+          items: [
+            { qty: '180 g', text: 'Farine T55', tag: 'Sec' },
+            { qty: '100 g', text: 'Beurre mou (pas fondu)', note: 'Sortir 1 h avant — texture pommade idéale', tag: 'Frais' },
+            { qty: '80 g',  text: 'Cassonade ou sucre roux', note: 'Donne le moelleux et la couleur ambrée caractéristique', tag: 'Sec' },
+            { qty: '50 g',  text: 'Sucre blanc', tag: 'Sec' },
+            { qty: '1',     text: 'Œuf entier (température ambiante)', tag: 'Frais' },
+            { qty: '1 c.c.', text: 'Extrait de vanille', tag: 'Aromate' },
+            { qty: '½ c.c.', text: 'Bicarbonate alimentaire', note: 'Donne du gonflant et la croûte fissurée', tag: 'Sec' },
+            { qty: '½ c.c.', text: 'Levure chimique', tag: 'Sec' },
+            { qty: '1 pincée', text: 'Sel fin (rehausse le chocolat)', tag: 'Sec' },
+            { qty: '150 g', text: 'Pépites de chocolat noir (ou chocolat haché grossièrement)', note: 'Du chocolat haché donne des pépites irrégulières plus gourmandes', tag: 'Garniture' },
+            { qty: '50 g',  text: 'Noix de pécan ou noisettes concassées', opt: 'Option', tag: 'Garniture' }
+          ]
+        },
+        {
+          num: '02', title: 'Matériel', time: '1 min',
+          items: [
+            { text: '<b>Plaque à pâtisserie</b> + papier sulfurisé (2 plaques si possible pour cuissons en série)', tag: 'Cuisson' },
+            { text: 'Saladier ou bol de robot pâtissier', tag: 'Mélange' },
+            { text: 'Spatule en bois ou maryse', tag: 'Mélange' },
+            { text: '<b>Cuillère à glace 4 cm</b> (boules régulières) ou 2 cuillères à soupe', note: 'La cuillère à glace garantit des cookies de taille identique → cuisson uniforme', tag: 'Façonnage' },
+            { text: 'Grille de refroidissement (indispensable pour la texture finale)', tag: 'Refroidissement' }
+          ]
+        },
+        {
+          num: '03', title: 'Préparation de la pâte', time: '7 min',
+          callout: { variant: 'tip', label: 'Ordre d\'incorporation', text: "Toujours commencer par <b>crémer le beurre + les sucres</b>. Cette étape incorpore de l'air et donne la texture aérée. Beurre fondu = cookies plats et durs." },
+          items: [
+            { text: '<b>Crémer beurre + cassonade + sucre blanc</b> au fouet 2-3 min', note: 'Le mélange doit blanchir et devenir mousseux', tag: 'Étape 1' },
+            { text: 'Ajouter l\'œuf et la vanille, fouetter pour incorporer', tag: 'Étape 2' },
+            { text: '<b>Tamiser ensemble :</b> farine + bicarbonate + levure + sel', tag: 'Étape 3' },
+            { text: 'Incorporer le sec en 2 fois à la spatule, sans trop travailler', note: 'Surmélange = cookies durs. Arrêter dès que la farine disparaît', tag: 'Critique' },
+            { text: 'Ajouter les pépites de chocolat (et noix si option), mélanger à la spatule', tag: 'Étape 5' }
+          ]
+        },
+        {
+          num: '04', title: 'Repos de la pâte', time: '30 min',
+          variant: 'tip',
+          callout: { variant: 'warn', label: 'Étape qui change tout', text: "Le repos au frigo permet à <b>la farine d'absorber les liquides et au beurre de raffermir</b>. Résultat : cookies qui s'étalent moins, plus épais et plus moelleux. <b>Optionnel mais fortement recommandé.</b>" },
+          timers: [
+            { seconds: 1800, label: 'Repos 30 min' },
+            { seconds: 7200, label: 'Repos 2 h (idéal)' }
+          ],
+          items: [
+            { text: 'Couvrir la pâte de film alimentaire au contact', tag: 'Préparation' },
+            { text: 'Placer au frigo <b>30 min minimum</b> (jusqu\'à 24 h pour développement maximal)', tag: 'Repos' },
+            { text: 'Si pâte trop dure après long repos : laisser 10 min à température ambiante avant façonnage', tag: 'Reprise' }
+          ]
+        },
+        {
+          num: '05', title: 'Façonnage et cuisson', time: '15 min',
+          tempBlock: [
+            { lab: 'Température', val: '180', unit: '°C' },
+            { lab: 'Cuisson',     val: '12',  unit: 'min' },
+            { lab: 'Espacement',  val: '5',   unit: 'cm' }
+          ],
+          timers: [
+            { seconds: 720, label: 'Cuisson 12 min' },
+            { seconds: 600, label: 'Contrôle 10 min' }
+          ],
+          items: [
+            { text: 'Préchauffer le four à <b>180°C chaleur tournante</b>', tag: 'Étape 1' },
+            { text: 'Tapisser la plaque de papier sulfurisé', tag: 'Étape 2' },
+            { text: '<b>Former 12 boules</b> à la cuillère à glace, espacées de 5 cm sur la plaque', note: 'Les cookies s\'étalent beaucoup à la cuisson — espacement critique', tag: 'Critique' },
+            { text: 'Aplatir légèrement chaque boule à la paume', tag: 'Étape 4' },
+            { text: 'Enfourner <b>12 minutes</b> à 180°C', tag: 'Étape 5' },
+            { text: '<b>Sortir quand les bords sont dorés mais le centre encore mou</b>', note: 'Ils continuent à cuire sur la plaque. Trop cuits = durs en refroidissant', tag: 'Critique' }
+          ]
+        },
+        {
+          num: '06', title: 'Refroidissement et service', time: '10 min',
+          items: [
+            { text: 'Laisser <b>5 minutes sur la plaque chaude</b> (finition de cuisson)', note: 'Démouler trop tôt = cookies qui cassent', tag: 'Critique' },
+            { text: 'Transférer sur grille avec une spatule large', tag: 'Étape 2' },
+            { text: 'Laisser refroidir 5 min de plus pour texture optimale', tag: 'Étape 3' },
+            { text: 'Servir tièdes (chocolat encore coulant) ou à température ambiante', tag: 'Service' },
+            { text: 'Conservation : 5 jours dans une boîte hermétique avec un morceau de pain (garde le moelleux)', tag: 'Stockage' },
+            { text: 'Congélation possible : crue (boules) ou cuite (paquet hermétique)', tag: 'Stockage' }
+          ]
+        }
+      ],
+      warnings: [
+        { bold: 'Beurre fondu au lieu de mou :', text: "cookies plats et durs. Toujours beurre pommade — souple mais pas liquide." },
+        { bold: 'Surmélange après ajout de la farine :', text: 'développe le gluten = cookies caoutchouteux. Mélanger juste assez.' },
+        { bold: 'Cookies trop espacés ou trop serrés :', text: '5 cm est le bon compromis. Trop serrés = cookies fusionnent en plaque.' },
+        { bold: 'Sortie trop tardive du four :', text: "ils paraissent crus mais durcissent en refroidissant. Faire confiance et sortir dès bords dorés." },
+        { bold: 'Pas de repos de la pâte :', text: "cookies plus plats et plus secs. Si pas le temps : 15 min au congélateur fait illusion." }
+      ],
+      quality: [
+        { label: 'Aspect',  text: 'Bords craquelés, centre légèrement bombé, pépites visibles' },
+        { label: 'Texture', text: 'Croquant aux bords, moelleux au cœur, fondant des pépites' },
+        { label: 'Couleur', text: 'Doré ambré uniforme' },
+        { label: 'Goût',    text: 'Beurre, cassonade, chocolat, vanille — équilibre sans surcharge' }
+      ]
+    },
+
+    quiche: {
+      emoji: '🥧',
+      accent: '#5C7361',
+      name: 'Quiche lorraine',
+      nameEm: "à l'ancienne",
+      ref: 'CHK-006-v1 · 2026',
+      summary: "La vraie quiche lorraine : pâte brisée maison, lardons fumés, appareil œufs-crème onctueux. 8 parts, moule 26 cm.",
+      meta: [
+        { label: 'Parts',       value: '8' },
+        { label: 'Moule',       value: '26 cm' },
+        { label: 'Préparation', value: '20 min' },
+        { label: 'Repos pâte',  value: '30 min' },
+        { label: 'Cuisson',     value: '35-40 min' }
+      ],
+      phases: [
+        { time: '10 MIN', name: 'Pâte brisée',     steps: '01 · 02 · 03', accent: 'terra',  target: 's01' },
+        { time: '15 MIN', name: 'Foncage & précuisson', steps: '04',      accent: 'ochre',  target: 's04' },
+        { time: '10 MIN', name: 'Garniture & appareil', steps: '05 · 06', accent: 'indigo', target: 's05' },
+        { time: '40 MIN', name: 'Cuisson & service', steps: '07 · 08',    accent: 'moss',   target: 's07' }
+      ],
+      sections: [
+        {
+          num: '01', title: 'Ingrédients — pâte brisée', time: '2 min',
+          items: [
+            { qty: '200 g',  text: 'Farine T55', tag: 'Sec' },
+            { qty: '100 g',  text: 'Beurre froid en cubes', note: "Le beurre doit rester froid jusqu'au bout pour une pâte croustillante", tag: 'Frais' },
+            { qty: '50 ml',  text: 'Eau froide (glacée si possible)', tag: 'Liquide' },
+            { qty: '1 pincée', text: 'Sel fin', tag: 'Sec' },
+            { text: 'Pâte brisée du commerce (1 rouleau 230 g)', opt: 'Raccourci', note: 'Préférer une pâte au beurre, pas margarine', tag: 'Alternative' }
+          ]
+        },
+        {
+          num: '02', title: 'Ingrédients — garniture & appareil', time: '2 min',
+          items: [
+            { qty: '200 g',  text: 'Lardons fumés (allumettes ou en cubes)', note: "Si trop salés : les blanchir 2 min à l'eau bouillante", tag: 'Frais' },
+            { qty: '4',      text: 'Œufs entiers', tag: 'Frais' },
+            { qty: '200 ml', text: 'Crème fraîche épaisse entière', note: 'La crème entière donne l\'onctuosité — éviter l\'allégée', tag: 'Liquide' },
+            { qty: '200 ml', text: 'Lait entier', tag: 'Liquide' },
+            { qty: 'pm',     text: 'Sel, poivre du moulin', note: 'Goûter avant — les lardons salent déjà beaucoup', tag: 'Assaisonnement' },
+            { qty: '1 pincée', text: 'Noix de muscade râpée', opt: 'Option', note: 'Touche traditionnelle — discret mais essentiel', tag: 'Aromate' },
+            { qty: '50 g',   text: 'Gruyère râpé', opt: 'Hérésie lorraine', note: "La vraie lorraine n'a PAS de fromage — mais une variante populaire", tag: 'Garniture' }
+          ]
+        },
+        {
+          num: '03', title: 'Préparation de la pâte brisée', time: '8 min',
+          callout: { variant: 'tip', label: 'Méthode du sablage', text: "Sabler = mélanger beurre froid et farine du bout des doigts <b>jusqu'à obtenir une texture sableuse</b>. Cette technique enrobe la farine de gras → pâte croustillante, peu élastique." },
+          items: [
+            { text: 'Verser farine + sel dans un saladier', tag: 'Étape 1' },
+            { text: 'Ajouter le beurre froid en cubes', tag: 'Étape 2' },
+            { text: '<b>Sabler du bout des doigts</b> 2-3 min jusqu\'à texture de gros sable', note: "Travailler vite pour ne pas réchauffer le beurre", tag: 'Critique' },
+            { text: 'Faire un puits, verser l\'eau froide au centre', tag: 'Étape 4' },
+            { text: 'Mélanger rapidement à la fourchette puis former une boule à la main', note: "Ne pas pétrir — juste assembler. La pâte doit être homogène mais pas lisse", tag: 'Étape 5' },
+            { text: 'Filmer la boule, aplatir en disque, <b>réfrigérer 30 min</b>', tag: 'Repos' }
+          ],
+          timers: [ { seconds: 1800, label: 'Repos pâte 30 min' } ]
+        },
+        {
+          num: '04', title: 'Foncer le moule et précuire', time: '15 min',
+          callout: { variant: 'tip', label: 'Précuisson "à blanc"', text: "La précuisson de la pâte vide <b>évite le fond détrempé</b> par l'appareil liquide. Étape essentielle pour une quiche réussie." },
+          items: [
+            { text: 'Préchauffer le four à <b>200°C chaleur tournante</b>', tag: 'Étape 1' },
+            { text: 'Beurrer légèrement le moule', tag: 'Étape 2' },
+            { text: 'Étaler la pâte sur 3-4 mm d\'épaisseur (sur plan fariné)', tag: 'Étape 3' },
+            { text: '<b>Foncer le moule</b>, remonter sur les bords, couper l\'excédent au rouleau', tag: 'Étape 4' },
+            { text: 'Piquer le fond à la fourchette (évite les cloques)', tag: 'Étape 5' },
+            { text: 'Recouvrir d\'un papier sulfurisé + lest (haricots secs / billes céramique)', note: 'Le lest empêche la pâte de gonfler et de glisser des bords', tag: 'Étape 6' },
+            { text: '<b>Précuire 10 minutes</b> à 200°C', tag: 'Étape 7' },
+            { text: 'Sortir, retirer lest et papier, baisser le four à 180°C', tag: 'Transition' }
+          ],
+          timers: [ { seconds: 600, label: 'Précuisson 10 min' } ]
+        },
+        {
+          num: '05', title: 'Préparer les lardons', time: '5 min',
+          callout: { variant: 'warn', label: 'Lardons fumés et sel', text: "<b>Goûter un lardon cru avant de saler l'appareil.</b> S'ils sont très salés, les blanchir 2 min à l'eau bouillante avant de les poêler." },
+          items: [
+            { text: '(Optionnel) Blanchir les lardons 2 min à l\'eau bouillante si très salés', opt: 'Option', tag: 'Préparation' },
+            { text: 'Faire revenir les lardons à sec dans une poêle <b>5 min</b>, feu moyen', note: "Pas besoin d'huile — ils rendent leur graisse", tag: 'Étape 2' },
+            { text: 'Égoutter sur papier absorbant (retirer l\'excès de gras)', tag: 'Étape 3' },
+            { text: 'Réserver tièdes', tag: 'Étape 4' }
+          ]
+        },
+        {
+          num: '06', title: "Préparation de l'appareil", time: '5 min',
+          items: [
+            { text: 'Casser les 4 œufs dans un saladier, fouetter brièvement (pas trop d\'air)', tag: 'Étape 1' },
+            { text: 'Ajouter la crème fraîche, fouetter pour homogénéiser', tag: 'Étape 2' },
+            { text: 'Verser le lait, fouetter à nouveau', tag: 'Étape 3' },
+            { text: '<b>Assaisonner :</b> poivre généreux, muscade, sel modéré (goûter avant)', note: "Les lardons apportent déjà beaucoup de sel", tag: 'Critique' },
+            { text: 'Vérifier l\'assaisonnement avec le bout du doigt', tag: 'Contrôle' }
+          ]
+        },
+        {
+          num: '07', title: 'Montage et cuisson', time: '35 min',
+          tempBlock: [
+            { lab: 'Température', val: '180',   unit: '°C' },
+            { lab: 'Cuisson',     val: '35-40', unit: 'min' },
+            { lab: 'Position',    val: 'Mi',    unit: 'four' }
+          ],
+          timers: [
+            { seconds: 2100, label: 'Cuisson 35 min' },
+            { seconds: 2400, label: 'Cuisson 40 min' }
+          ],
+          items: [
+            { text: 'Répartir les lardons sur le fond précuit', tag: 'Étape 1' },
+            { text: 'Saupoudrer de gruyère râpé si option choisie', opt: 'Option', tag: 'Étape 2' },
+            { text: '<b>Verser l\'appareil délicatement</b> jusqu\'à 5 mm du bord (pas plus)', note: "Si le bord est dépassé, ça déborde et brûle au four", tag: 'Critique' },
+            { text: 'Enfourner <b>35-40 minutes</b> à 180°C, position mi-hauteur', tag: 'Étape 4' },
+            { text: 'À 30 min : vérifier la coloration (dorée, pas brune)', note: 'Si trop foncé : couvrir d\'alu pour les dernières min', tag: 'Contrôle' },
+            { text: '<b>Test de cuisson :</b> la lame de couteau ressort propre, le centre est juste pris (légèrement tremblotant)', tag: 'Critique' }
+          ]
+        },
+        {
+          num: '08', title: 'Repos et service', time: '5 min',
+          items: [
+            { text: 'Sortir du four, laisser tiédir <b>5-10 minutes</b>', note: "L'appareil finit de prendre, le démoulage est plus facile", tag: 'Critique' },
+            { text: 'Démouler sur planche ou plat de service', tag: 'Étape 2' },
+            { text: 'Découper en 8 parts au couteau bien aiguisé', tag: 'Étape 3' },
+            { text: 'Servir tiède avec une salade verte (vinaigrette moutarde)', note: "Plat complet du soir ou entrée généreuse", tag: 'Service' },
+            { text: 'Conservation : 2 jours au frigo, sous film', tag: 'Stockage' },
+            { text: 'Réchauffage : 10 min au four 150°C (jamais micro-ondes — pâte caoutchouteuse)', tag: 'Stockage' }
+          ]
+        }
+      ],
+      warnings: [
+        { bold: 'Pâte qui s\'effondre à la précuisson :', text: 'lest insuffisant ou pâte mal foncée. Bien remonter sur les bords et lester généreusement.' },
+        { bold: 'Fond détrempé :', text: 'précuisson sautée ou trop courte. Toujours précuire 10 min à 200°C avant garniture.' },
+        { bold: 'Quiche trop salée :', text: 'lardons pas blanchis + sel ajouté. Toujours goûter un lardon avant de saler l\'appareil.' },
+        { bold: 'Centre liquide à la sortie :', text: "cuisson insuffisante. Prolonger 5-10 min. Le centre doit trembloter mais pas couler." },
+        { bold: 'Surface trop dorée mais centre cru :', text: 'four trop chaud. Couvrir d\'alu et baisser à 160°C pour finir.' },
+        { bold: 'Bord brûlé :', text: 'appareil débordé pendant la cuisson. Toujours laisser 5 mm de marge en dessous du bord.' }
+      ],
+      quality: [
+        { label: 'Aspect',  text: 'Surface dorée, légèrement gonflée mais pas brûlée' },
+        { label: 'Texture', text: 'Pâte croustillante, appareil ferme et fondant, lardons croquants' },
+        { label: 'Couleur', text: 'Doré uniforme, parsemé de lardons brun-rouge' },
+        { label: 'Goût',    text: 'Lardons fumés, crème onctueuse, muscade en arrière-plan, équilibre salé' }
+      ]
+    },
+
+    pain: {
+      emoji: '🍞',
+      accent: '#9C6F1E',
+      name: 'Pain maison',
+      nameEm: 'cuit en cocotte',
+      ref: 'CHK-007-v1 · 2026',
+      summary: "Une boule de pain croustillante à la mie alvéolée, cuite en cocotte fonte pour reproduire un four de boulanger. 1 grosse boule, 6-8 personnes.",
+      meta: [
+        { label: 'Boules',      value: '1 grosse' },
+        { label: 'Personnes',   value: '6-8' },
+        { label: 'Préparation', value: '20 min' },
+        { label: 'Pousses',     value: '1 h 30 + 1 h' },
+        { label: 'Cuisson',     value: '45 min' }
+      ],
+      phases: [
+        { time: '15 MIN', name: 'Pétrissage',          steps: '01 · 02 · 03', accent: 'terra',  target: 's01' },
+        { time: '90 MIN', name: '1ʳᵉ pousse',          steps: '04',           accent: 'ochre',  target: 's04' },
+        { time: '60 MIN', name: 'Façonnage & 2ᵉ pousse', steps: '05 · 06',    accent: 'indigo', target: 's05' },
+        { time: '45 MIN', name: 'Cuisson cocotte',     steps: '07 · 08',      accent: 'moss',   target: 's07' }
+      ],
+      sections: [
+        {
+          num: '01', title: 'Ingrédients', time: '2 min',
+          callout: { variant: 'tip', label: 'La précision compte', text: "En boulange, <b>chaque gramme compte</b>. Utilise une balance, pas des cuillères-mesure. Le ratio eau/farine (hydratation) détermine la mie." },
+          items: [
+            { qty: '500 g',  text: 'Farine T65 (ou mélange T55 + T80)', note: 'T65 donne mie + croûte équilibrées. T80 = plus rustique. Éviter T45 (trop blanche)', tag: 'Sec' },
+            { qty: '350 ml', text: 'Eau tiède (≤ 35°C, jamais > 40°C)', note: 'Eau trop chaude TUE la levure. Eau froide ralentit la pousse', tag: 'Liquide' },
+            { qty: '10 g',   text: 'Sel fin (1 c.c. rase)', note: 'Le sel ne doit JAMAIS toucher directement la levure (la tue). Mélanger au sec d\'abord', tag: 'Sec' },
+            { qty: '5 g',    text: 'Levure boulangère sèche (ou 12 g fraîche)', note: 'Pas de levure chimique — résultat catastrophique en boulange', tag: 'Levant' },
+            { qty: '1 c.s.', text: 'Graines de sésame, lin, pavot ou tournesol', opt: 'Option', note: 'Sur le dessus avant cuisson pour le visuel', tag: 'Garniture' }
+          ]
+        },
+        {
+          num: '02', title: 'Matériel', time: '2 min',
+          items: [
+            { text: '<b>Cocotte en fonte avec couvercle</b>, diamètre 24-26 cm (Le Creuset ou équivalent)', note: "La fonte stocke et restitue la chaleur — effet four de boulanger. Indispensable pour ce pain", tag: 'Cuisson' },
+            { text: 'Saladier ou cul-de-poule de 3 L minimum', tag: 'Mélange' },
+            { text: '<b>Balance de cuisine</b> (au gramme près)', note: 'En boulange, la précision est non négociable', tag: 'Mesure' },
+            { text: 'Spatule ou corne de boulanger', tag: 'Mélange' },
+            { text: 'Linge propre et sec (pour couvrir les pousses)', tag: 'Pousse' },
+            { text: 'Papier sulfurisé (pour le transfert dans la cocotte chaude)', tag: 'Cuisson' },
+            { text: '<b>Lame de rasoir, cutter ou couteau bien aiguisé</b> (pour scarifier)', note: 'Une lame émoussée déchire la pâte au lieu de la couper proprement', tag: 'Façonnage' },
+            { text: 'Gants de four épais (cocotte à 240°C — risque brûlure grave)', tag: 'Sécurité' },
+            { text: 'Grille de refroidissement', tag: 'Refroidissement' }
+          ]
+        },
+        {
+          num: '03', title: 'Pétrissage', time: '12 min',
+          callout: { variant: 'warn', label: 'Le geste qui fait tout', text: "Le pétrissage <b>développe le réseau de gluten</b> qui retient le CO2 de la levure. Sous-pétrissage = mie compacte, pas d'alvéoles. Sur-pétrissage = mie filandreuse." },
+          items: [
+            { text: '<b>Activer la levure :</b> délayer dans 50 ml d\'eau tiède prélevée sur les 350 ml', note: "Optionnel : ajouter 1 pincée de sucre pour vérifier l'activité (mousse en 5 min)", tag: 'Étape 1' },
+            { text: 'Dans le saladier, mélanger farine + sel <b>à sec</b>', note: 'Sel et levure ne doivent jamais entrer en contact direct', tag: 'Critique' },
+            { text: 'Faire un puits, verser l\'eau-levure activée + le reste d\'eau tiède', tag: 'Étape 3' },
+            { text: 'Mélanger à la spatule jusqu\'à pâte grossière collante', tag: 'Étape 4' },
+            { text: '<b>Pétrir à la main 10 minutes</b> sur plan légèrement fariné', note: 'Geste : étirer en avant avec la paume, replier vers soi, tourner d\'un quart, recommencer', tag: 'Critique' },
+            { text: 'La pâte est prête quand elle est <b>lisse, élastique, peu collante</b>', tag: 'Contrôle' },
+            { text: '<b>Test du voile :</b> étirer un petit morceau entre les doigts. Doit former un voile fin translucide sans déchirer', note: 'Si déchire = pétrir 2-3 min de plus. Si rebondit sans s\'étirer = surpétrissage', tag: 'Test' }
+          ]
+        },
+        {
+          num: '04', title: '1ʳᵉ pousse — pointage', time: '1 h 30',
+          variant: 'tip',
+          callout: { variant: 'warn', label: 'Le rôle de cette pousse', text: "Pendant cette phase, la levure produit du CO2 qui gonfle la pâte et <b>développe les arômes</b>. Une pousse trop courte = pain peu aromatique. Trop longue = pâte qui retombe." },
+          timers: [
+            { seconds: 5400, label: 'Pousse 1 h 30' },
+            { seconds: 7200, label: 'Pousse 2 h (lent)' }
+          ],
+          items: [
+            { text: 'Bouler la pâte (rabats serrés sous la boule)', tag: 'Étape 1' },
+            { text: 'Déposer dans le saladier légèrement huilé', tag: 'Étape 2' },
+            { text: 'Couvrir d\'un linge humide (essoré)', note: 'Évite que la surface croûte', tag: 'Étape 3' },
+            { text: '<b>Placer dans un endroit tiède</b> (24-28°C idéal)', note: 'Four éteint avec lampe allumée = parfait. Sinon, près d\'un radiateur ou pièce tempérée', tag: 'Étape 4' },
+            { text: 'Laisser pousser <b>1 h 30</b> (la pâte doit doubler de volume)', tag: 'Critique' },
+            { text: '<b>Test du doigt :</b> enfoncer un doigt fariné. L\'empreinte doit revenir lentement (pas immédiatement, pas du tout)', note: 'Revient vite = pas assez. Reste creusée = trop poussée', tag: 'Test' }
+          ]
+        },
+        {
+          num: '05', title: 'Façonnage et 2ᵉ pousse — apprêt', time: '1 h',
+          callout: { variant: 'tip', label: 'Geste de façonnage', text: "Le façonnage <b>donne sa structure finale au pain</b>. Une boule mal façonnée s'étalera à la cuisson. Geste : rabattre les bords vers le centre puis retourner et faire tourner sur le plan pour serrer." },
+          timers: [ { seconds: 3600, label: '2ᵉ pousse 1 h' } ],
+          items: [
+            { text: 'Sortir la pâte sur plan <b>légèrement</b> fariné', note: 'Pas trop de farine — sinon le pain devient sec', tag: 'Étape 1' },
+            { text: '<b>Dégazer doucement :</b> presser avec les paumes pour expulser le CO2', tag: 'Étape 2' },
+            { text: 'Rabattre les bords vers le centre, plusieurs fois', tag: 'Étape 3' },
+            { text: 'Retourner la boule, soudure en dessous', tag: 'Étape 4' },
+            { text: '<b>Faire tourner la boule</b> sur le plan en serrant avec les paumes (5-6 tours)', note: 'Forme une belle boule tendue, non collante', tag: 'Étape 5' },
+            { text: 'Déposer la boule sur un carré de papier sulfurisé fariné', tag: 'Étape 6' },
+            { text: 'Couvrir d\'un linge sec', tag: 'Étape 7' },
+            { text: 'Laisser pousser <b>1 heure</b> à température ambiante', tag: 'Critique' }
+          ]
+        },
+        {
+          num: '06', title: 'Préchauffage cocotte (en parallèle)', time: '30 min',
+          callout: { variant: 'tip', label: 'Logique chef pro', text: "À <b>20 min après le début de la 2ᵉ pousse</b>, lancer le préchauffage cocotte vide. Quand le pain a fini sa pousse (40 min plus tard), la cocotte sera brûlante — prête à recevoir." },
+          items: [
+            { text: '<b>Au bout de 20 min de la 2ᵉ pousse :</b> mettre la cocotte fermée (avec son couvercle) dans le four', tag: 'Critique' },
+            { text: 'Préchauffer à <b>240°C chaleur tournante</b>', tag: 'Étape 2' },
+            { text: 'Laisser monter en température <b>30 minutes minimum</b>', note: 'La fonte doit être brûlante — c\'est ce qui crée le "ressort de cuisson"', tag: 'Critique' },
+            { text: 'NE PAS ouvrir le four pendant ce préchauffage (déperdition)', tag: 'Sécurité' }
+          ]
+        },
+        {
+          num: '07', title: 'Mise en cocotte et cuisson', time: '45 min',
+          tempBlock: [
+            { lab: 'Couvert',  val: '240', unit: '°C' },
+            { lab: 'Phase 1',  val: '35',  unit: 'min' },
+            { lab: 'Découvert', val: '220', unit: '°C' },
+            { lab: 'Phase 2',  val: '10',  unit: 'min' }
+          ],
+          timers: [
+            { seconds: 2100, label: 'Couvert 35 min' },
+            { seconds: 600,  label: 'Découvert 10 min' }
+          ],
+          items: [
+            { text: '<b>SÉCURITÉ :</b> mettre des gants de four épais — la cocotte sort à 240°C', tag: 'Critique' },
+            { text: 'Sortir la cocotte du four, poser sur dessous-de-plat résistant', tag: 'Étape 2' },
+            { text: 'Retirer le couvercle (le poser à côté, brûlant)', tag: 'Étape 3' },
+            { text: '<b>Scarifier la boule :</b> 1 grand trait droit, ou une croix, ou un ⩙ avec la lame', note: "Trait franc et net, profondeur ~ 5 mm. Une scarification permet à la pâte de s'ouvrir proprement à la cuisson", tag: 'Critique' },
+            { text: 'Saupoudrer de graines si option', opt: 'Option', tag: 'Étape 5' },
+            { text: '<b>Soulever le pain par le papier sulfurisé</b> et le déposer dans la cocotte (papier inclus)', note: 'Permet un transfert sans se brûler', tag: 'Étape 6' },
+            { text: 'Refermer le couvercle (chaud, attention)', tag: 'Étape 7' },
+            { text: 'Cuire <b>35 minutes à 240°C couvert</b>', note: 'La vapeur dégagée par le pain reste dans la cocotte = effet four à vapeur professionnel', tag: 'Critique' },
+            { text: '<b>À 35 min :</b> sortir, retirer le couvercle, baisser à 220°C', tag: 'Transition' },
+            { text: 'Remettre la cocotte ouverte dans le four <b>10 min de plus</b>', note: 'Donne la croûte dorée et croustillante', tag: 'Étape 10' },
+            { text: '<b>Test sonore :</b> sortir le pain, taper le dessous avec le doigt — doit sonner creux', note: 'Si son mat = re-cuire 5 min découvert', tag: 'Test' }
+          ]
+        },
+        {
+          num: '08', title: 'Refroidissement et conservation', time: '30 min',
+          callout: { variant: 'warn', label: "Patience obligatoire", text: "Le pain <b>finit de cuire en refroidissant</b>. Couper trop tôt = mie collante, perte d'humidité. Attendre minimum 30 min, idéalement 1 h." },
+          items: [
+            { text: 'Sortir le pain de la cocotte avec le papier sulfurisé', tag: 'Étape 1' },
+            { text: 'Déposer sur grille (l\'air doit circuler en dessous)', note: 'Sur planche = dessous qui ramollit', tag: 'Critique' },
+            { text: 'Laisser refroidir <b>30 minutes minimum</b> avant de couper', tag: 'Critique' },
+            { text: 'Le pain "chante" : tu peux entendre la croûte craqueler en refroidissant', note: "Signe de réussite — l'humidité s'évacue", tag: 'Bonus' },
+            { text: 'Servir tiède ou à température ambiante', tag: 'Service' },
+            { text: 'Conservation : 3-4 jours dans un torchon ou sac papier', note: 'Jamais en plastique = ramollit la croûte. Pas au frigo = dessèche', tag: 'Stockage' },
+            { text: 'Se prête bien à la congélation tranchée (toaster directement)', tag: 'Stockage' }
+          ]
+        }
+      ],
+      warnings: [
+        { bold: 'Eau trop chaude (> 40°C) :', text: 'tue la levure. Au pire : eau froide, ça pousse plus lentement mais ça pousse.' },
+        { bold: 'Sel au contact direct de la levure :', text: 'la tue aussi. Toujours mélanger sel + farine d\'abord, levure dans l\'eau séparément.' },
+        { bold: 'Sous-pétrissage :', text: 'mie compacte sans alvéoles. Faire le test du voile avant d\'arrêter.' },
+        { bold: 'Sur-pétrissage à la main :', text: "très difficile à atteindre manuellement. Au robot par contre, attention." },
+        { bold: 'Pousse insuffisante :', text: 'pain dense. Test du doigt obligatoire avant façonnage.' },
+        { bold: 'Pousse excessive :', text: "la pâte retombe à la cuisson. Visible : empreinte du doigt qui ne se rebouche pas du tout." },
+        { bold: 'Cocotte pas assez chaude :', text: 'pas de "ressort de cuisson", pain plat. 30 min de préchauffage minimum, non négociable.' },
+        { bold: 'Cocotte SANS couvercle pour la phase 1 :', text: "perte de la vapeur = croûte qui durcit avant que le pain n'ait fini de pousser. Couvercle obligatoire les 35 premières min." },
+        { bold: 'Couper le pain chaud :', text: "mie collante, écrasée. Attendre 30 min minimum." }
+      ],
+      quality: [
+        { label: 'Aspect',  text: 'Croûte brun cuivré, scarifications bien ouvertes (signe de bonne pousse)' },
+        { label: 'Texture', text: 'Croûte épaisse et craquante, mie alvéolée souple et élastique' },
+        { label: 'Couleur', text: 'Dessus brun foncé, dessous beige doré, mie ivoire' },
+        { label: 'Goût',    text: 'Croûte caramélisée, mie légèrement acidulée et complexe' }
+      ]
+    }
+
+  }; // end RECIPES
+
+  // ════════════════════════════════════════════════════════════
+  //  STATE — per-recipe localStorage
+  // ════════════════════════════════════════════════════════════
+
+  const stateKey = id => `recipe-state-v1-${id}`;
+
+  const loadChecked = id => {
+    try {
+      const raw = localStorage.getItem(stateKey(id));
+      const arr = raw ? JSON.parse(raw) : [];
+      return Array.isArray(arr) ? new Set(arr) : new Set();
+    } catch (_) { return new Set(); }
+  };
+
+  const saveChecked = (id, set) => {
+    try { localStorage.setItem(stateKey(id), JSON.stringify([...set])); } catch (_) {}
+  };
+
+  const totalItems = recipe => {
+    let n = 0;
+    for (const sec of recipe.sections) {
+      n += sec.items?.length || 0;
+      n += (sec.groups || []).reduce((a, g) => a + (g.items?.length || 0), 0);
+    }
+    return n;
+  };
+
+  const recipeProgress = id => {
+    const recipe = RECIPES[id];
+    if (!recipe) return { done: 0, total: 0, pct: 0 };
+    const total = totalItems(recipe);
+    const done = loadChecked(id).size;
+    return { done, total, pct: total ? Math.round(done / total * 100) : 0 };
+  };
+
+  // ════════════════════════════════════════════════════════════
+  //  RENDER HELPERS
+  //  Recipe data is authored by us (trusted) — text/note may
+  //  contain HTML (<b>, etc.).
+  // ════════════════════════════════════════════════════════════
+
+  const sectionAnchor = sec => 's-' + (sec.anchor || sec.num.replace(/[^a-z0-9]/gi, ''));
+
+  const renderItem = (item, idx) => `
+    <li>
+      <label class="cb-wrap">
+        <input type="checkbox" data-idx="${idx}" aria-labelledby="lbl-${idx}">
+        <span class="cb"></span>
+      </label>
+      <span class="label" id="lbl-${idx}">
+        ${item.qty ? `<span class="qty">${item.qty}</span>` : ''}
+        ${item.text}
+        ${item.opt ? `<span class="opt">${item.opt}</span>` : ''}
+        ${item.note ? `<span class="note">${item.note}</span>` : ''}
+      </span>
+      ${item.tag ? `<span class="tag">${item.tag}</span>` : ''}
+    </li>
+  `;
+
+  const renderCallout = c => `
+    <div class="callout ${c.variant}">
+      ${c.label ? `<div class="callout-lab">${c.label}</div>` : ''}
+      <p>${c.text}</p>
+    </div>
+  `;
+
+  const renderTempBlock = cells => `
+    <div class="temp-block">
+      ${cells.map(c => `
+        <div class="temp-cell">
+          <div class="lab">${c.lab}</div>
+          <div class="val">${c.val}<span class="unit">${c.unit}</span></div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+
+  const fmtTime = s => `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
+
+  const renderTimers = timers => `
+    <div class="timers" role="group" aria-label="Minuteurs de cuisson">
+      ${timers.map(t => `
+        <button class="timer-btn" data-timer="${t.seconds}" type="button" aria-label="Lancer minuteur ${t.label}">
+          <span class="label-t">${t.label}</span>
+          <span class="countdown">${fmtTime(t.seconds)}</span>
+        </button>
+      `).join('')}
+    </div>
+  `;
+
+  // Stateful counter so each rendered checkbox gets a stable index per render
+  const renderSection = (sec, counter) => {
+    const id = sectionAnchor(sec);
+    const heading = `
+      <div class="section-head">
+        <div class="step-num ${sec.numClass || ''}">${sec.num}</div>
+        <h2 id="h-${id}">${sec.title}</h2>
+        <span class="time ${sec.timeVariant || ''}">${sec.time}</span>
+      </div>
+    `;
+    const intro = sec.intro ? `<p class="section-intro">${sec.intro}</p>` : '';
+    const callout = sec.callout ? renderCallout(sec.callout) : '';
+    const tempBlock = sec.tempBlock ? renderTempBlock(sec.tempBlock) : '';
+    const timers = sec.timers ? renderTimers(sec.timers) : '';
+
+    let body = '';
+    if (sec.items) {
+      body += `<ul class="check-list">${sec.items.map(it => renderItem(it, counter.next())).join('')}</ul>`;
+    }
+    if (sec.groups) {
+      body += sec.groups.map(g => `
+        <h4 class="sub-head">${g.heading}${g.badge ? `<span class="badge ${g.badge.variant === 'ochre' ? 'ochre' : ''}">${g.badge.text}</span>` : ''}</h4>
+        <ul class="check-list">${g.items.map(it => renderItem(it, counter.next())).join('')}</ul>
+      `).join('');
+    }
+    const callouts = (sec.callouts || []).map(renderCallout).join('');
+
+    return `<section class="section ${sec.variant || ''}" id="${id}" aria-labelledby="h-${id}">${heading}${intro}${callout}${tempBlock}${body}${timers}${callouts}</section>`;
+  };
+
+  // ════════════════════════════════════════════════════════════
+  //  VIEWS — renderHome / renderRecipe
+  // ════════════════════════════════════════════════════════════
+
+  const $app = document.getElementById('app');
+  const $topbar = document.getElementById('topbar');
+  const $actions = document.getElementById('actions');
+  const $toast = document.getElementById('toast');
+
+  const renderHome = () => {
+    $topbar.innerHTML = `
+      <div class="topbar no-progress">
+        <div class="row">
+          <span class="title">Mes recettes — checklists interactives</span>
+          <span class="pct">${Object.keys(RECIPES).length} recettes</span>
+        </div>
+      </div>
+    `;
+    $actions.innerHTML = '';
+
+    const cards = Object.entries(RECIPES).map(([id, r]) => {
+      const p = recipeProgress(id);
+      const stats = r.meta.slice(0, 3).map(m => `<span>${m.value}</span>`).join('');
+      return `
+        <a class="r-card" href="#/r/${id}" style="--accent:${r.accent}">
+          <div class="topline">
+            <div class="emoji" aria-hidden="true">${r.emoji}</div>
+            <div class="badge-pct ${p.done > 0 ? 'active' : ''}">${p.done}/${p.total}</div>
+          </div>
+          <h3>${r.name}<span class="em">${r.nameEm}</span></h3>
+          <div class="stats">${stats}</div>
+          <div class="ref">${r.ref}</div>
+          <div class="mini-track"><div class="mini-fill" style="width:${p.pct}%"></div></div>
+        </a>
+      `;
+    }).join('');
+
+    $app.innerHTML = `
+      <main class="page">
+        <header class="home-head">
+          <div class="kicker">Cuisine · A Y S</div>
+          <h1>Mes <em>recettes</em></h1>
+          <p class="lead">Sélectionne une recette pour ouvrir sa checklist interactive. Ta progression est sauvegardée automatiquement.</p>
+        </header>
+        <div class="recipes">${cards}</div>
+      </main>
+    `;
+  };
+
+  const renderRecipe = id => {
+    const recipe = RECIPES[id];
+    if (!recipe) { location.hash = '#/'; return; }
+    const checked = loadChecked(id);
+    const counter = { i: 0, next() { return this.i++; } };
+
+    const meta = recipe.meta.map(m => `<div class="meta"><b>${m.label}</b><span>${m.value}</span></div>`).join('');
+    const phases = recipe.phases.map(p => `
+      <button class="phase ${p.accent}" type="button" data-target="${sectionAnchor({ num: p.target.replace('s', '') })}" aria-label="Aller à la phase ${p.name} (${p.time})">
+        <div class="phase-lab">PHASE · ${p.time}</div>
+        <div class="phase-name">${p.name}</div>
+        <div class="phase-steps">${p.steps}</div>
+      </button>
+    `).join('');
+    const sections = recipe.sections.map(s => renderSection(s, counter)).join('');
+    const warns = recipe.warnings?.length ? `
+      <aside class="warns" aria-labelledby="warn-h">
+        <h3 id="warn-h">Points de vigilance — pièges à éviter</h3>
+        <ul>${recipe.warnings.map(w => `<li><b>${w.bold}</b> ${w.text}</li>`).join('')}</ul>
+      </aside>
+    ` : '';
+    const quality = recipe.quality?.length ? `
+      <section class="quality" aria-labelledby="qh">
+        <h2 id="qh">Contrôle qualité — <em>signature AYS</em></h2>
+        <div class="quality-grid">
+          ${recipe.quality.map(q => `<div class="q-card"><div class="lab">${q.label}</div><p>${q.text}</p></div>`).join('')}
+        </div>
+      </section>
+    ` : '';
+
+    $topbar.innerHTML = `
+      <div class="topbar">
+        <div class="row">
+          <button class="back-btn" id="backBtn" type="button" aria-label="Retour à la liste des recettes">← Recettes</button>
+          <span class="title">${recipe.emoji} ${recipe.name}</span>
+          <span class="pct" id="pctText">0%</span>
+        </div>
+        <div class="progress-track" role="progressbar" aria-label="Progression de la recette" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="progressBar">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+      </div>
+    `;
+
+    $app.innerHTML = `
+      <main class="page">
+        <header class="head">
+          <div class="top-row">
+            <span>Fiche Cuisine · Checklist Opérationnelle</span>
+            <span class="ref">Réf. ${recipe.ref}</span>
+          </div>
+          <h1 class="recipe-title">${recipe.name}<br>${recipe.nameEm ? `<em>${recipe.nameEm}</em>` : ''}</h1>
+          ${recipe.summary ? `<p class="subtitle">${recipe.summary}</p>` : ''}
+          <div class="meta-row">${meta}</div>
+          <nav class="timeline" aria-label="Vue d'ensemble des phases">
+            <div class="timeline-title">Vue d'ensemble · ${recipe.phases.length} phases</div>
+            <div class="phases">${phases}</div>
+          </nav>
+        </header>
+        ${sections}
+        ${warns}
+        ${quality}
+        <footer class="foot">
+          <span>${recipe.ref} · ${recipe.name}</span>
+          <span class="ays">— A Y S —</span>
+        </footer>
+      </main>
+    `;
+
+    $actions.innerHTML = `
+      <nav class="actions" aria-label="Actions">
+        <button class="action-btn" id="nextBtn" type="button" aria-label="Aller à la prochaine étape">↓ Suivant</button>
+        <button class="action-btn" id="printBtn" type="button" aria-label="Imprimer la fiche">⎙ Imprimer</button>
+        <button class="action-btn" id="resetBtn" type="button" aria-label="Réinitialiser la checklist">↻ Réinitialiser</button>
+      </nav>
+    `;
+
+    bindRecipeBehavior(id, checked);
+  };
+
+  // ════════════════════════════════════════════════════════════
+  //  RECIPE BEHAVIOR — checkboxes, timers, actions
+  // ════════════════════════════════════════════════════════════
+
+  const liveTimers = []; // { btn, intervalId, cdEl, total, remaining, running }
+  let wakeLock = null;
+
+  const requestWakeLock = async () => {
+    if (!('wakeLock' in navigator)) return;
+    if (wakeLock) return;
+    try { wakeLock = await navigator.wakeLock.request('screen'); } catch (_) {}
+  };
+  const releaseWakeLock = () => { wakeLock?.release().catch(() => {}); wakeLock = null; };
+  const maybeReleaseWakeLock = () => {
+    if (!liveTimers.some(t => t.running)) releaseWakeLock();
+  };
+
+  const cleanupRecipe = () => {
+    liveTimers.forEach(t => { clearInterval(t.intervalId); t.intervalId = null; t.running = false; });
+    liveTimers.length = 0;
+    releaseWakeLock();
+  };
+
+  let toastTimer;
+  const showToast = (msg, ms = 2500) => {
+    $toast.textContent = msg;
+    $toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => $toast.classList.remove('show'), ms);
+  };
+
+  const bindRecipeBehavior = (id, checked) => {
+    const checkboxes = Array.from(document.querySelectorAll('input[type="checkbox"]'));
+    const fill = document.getElementById('progressFill');
+    const pctText = document.getElementById('pctText');
+    const progressBar = document.getElementById('progressBar');
+
+    // Restore state
+    checkboxes.forEach(cb => {
+      const idx = +cb.dataset.idx;
+      if (checked.has(idx)) {
+        cb.checked = true;
+        cb.closest('li')?.classList.add('done');
+      }
+    });
+
+    const updateProgress = () => {
+      const done = checkboxes.filter(cb => cb.checked).length;
+      const pct = checkboxes.length ? Math.round(done / checkboxes.length * 100) : 0;
+      fill.style.width = pct + '%';
+      pctText.textContent = pct + '%';
+      progressBar.setAttribute('aria-valuenow', pct);
+      if (pct === 100) showToast('🎉 Recette terminée — bon appétit !');
+    };
+
+    checkboxes.forEach(cb => {
+      cb.addEventListener('change', () => {
+        const idx = +cb.dataset.idx;
+        cb.closest('li')?.classList.toggle('done', cb.checked);
+        if (cb.checked) checked.add(idx); else checked.delete(idx);
+        saveChecked(id, checked);
+        updateProgress();
+      });
+    });
+
+    // Back button
+    document.getElementById('backBtn')?.addEventListener('click', () => { location.hash = '#/'; });
+
+    // Reset
+    document.getElementById('resetBtn').addEventListener('click', () => {
+      if (!confirm('Réinitialiser la checklist de cette recette ?')) return;
+      checkboxes.forEach(cb => { cb.checked = false; cb.closest('li')?.classList.remove('done'); });
+      checked.clear();
+      saveChecked(id, checked);
+      updateProgress();
+      showToast('Checklist réinitialisée');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    // Print
+    document.getElementById('printBtn').addEventListener('click', () => window.print());
+
+    // Next unchecked
+    document.getElementById('nextBtn').addEventListener('click', () => {
+      const next = checkboxes.find(cb => !cb.checked);
+      if (!next) { showToast('Tout est coché !'); return; }
+      const li = next.closest('li');
+      li?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      li?.animate(
+        [{ background: 'rgba(199,91,63,.18)' }, { background: 'transparent' }],
+        { duration: 1400, easing: 'ease-out' }
+      );
+    });
+
+    // Cooking timers
+    document.querySelectorAll('.timer-btn').forEach(btn => bindTimer(btn));
+
+    // Phase navigation (in-page scroll without triggering router)
+    document.querySelectorAll('.phase').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const target = document.getElementById(btn.dataset.target);
+        target?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+
+    updateProgress();
+  };
+
+  const bindTimer = btn => {
+    const total = +btn.dataset.timer;
+    const cdEl = btn.querySelector('.countdown');
+    const labelText = btn.querySelector('.label-t').textContent;
+    const state = { btn, intervalId: null, cdEl, total, remaining: total, running: false };
+    liveTimers.push(state);
+
+    const reset = () => {
+      state.remaining = total;
+      cdEl.textContent = fmtTime(total);
+      btn.classList.remove('running', 'done');
+      state.running = false;
+    };
+
+    const finish = () => {
+      clearInterval(state.intervalId);
+      state.intervalId = null;
+      btn.classList.remove('running');
+      btn.classList.add('done');
+      state.running = false;
+      maybeReleaseWakeLock();
+      cdEl.textContent = 'Fini !';
+      try { navigator.vibrate?.([300, 150, 300, 150, 600]); } catch (_) {}
+      try {
+        const Ctx = window.AudioContext || window.webkitAudioContext;
+        if (Ctx) {
+          const ctx = new Ctx();
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.connect(gain); gain.connect(ctx.destination);
+          osc.frequency.value = 880; gain.gain.value = .3;
+          osc.start(); osc.stop(ctx.currentTime + .6);
+          osc.onended = () => { ctx.close?.().catch(() => {}); };
+        }
+      } catch (_) {}
+      showToast(`⏰ Minuteur "${labelText}" terminé`, 5000);
+    };
+
+    btn.addEventListener('click', () => {
+      if (btn.classList.contains('done')) { reset(); return; }
+      if (state.running) {
+        clearInterval(state.intervalId);
+        state.intervalId = null;
+        btn.classList.remove('running');
+        state.running = false;
+        maybeReleaseWakeLock();
+        return;
+      }
+      state.running = true;
+      btn.classList.add('running');
+      requestWakeLock();
+      state.intervalId = setInterval(() => {
+        state.remaining--;
+        if (state.remaining < 0) state.remaining = 0;
+        cdEl.textContent = fmtTime(state.remaining);
+        if (state.remaining <= 0) finish();
+      }, 1000);
+    });
+  };
+
+  // ════════════════════════════════════════════════════════════
+  //  ROUTER — hash-based, #/r/<id> opens a recipe
+  // ════════════════════════════════════════════════════════════
+
+  const route = () => {
+    cleanupRecipe();
+    const m = (location.hash || '').match(/^#\/r\/([a-z0-9_-]+)$/);
+    if (m && RECIPES[m[1]]) {
+      renderRecipe(m[1]);
+    } else {
+      renderHome();
+    }
+    window.scrollTo(0, 0);
+  };
+
+  window.addEventListener('hashchange', route);
+  route();
+
+  // ════════════════════════════════════════════════════════════
+  //  PWA — service worker registration + install prompt
+  // ════════════════════════════════════════════════════════════
+  const $install = document.getElementById('installBtn');
+  let deferredInstall = null;
+
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredInstall = e;
+    if ($install) $install.classList.add('visible');
+  });
+
+  if ($install) {
+    $install.addEventListener('click', async () => {
+      if (!deferredInstall) return;
+      $install.classList.remove('visible');
+      try {
+        deferredInstall.prompt();
+        await deferredInstall.userChoice;
+      } catch (_) { /* noop */ }
+      deferredInstall = null;
+    });
+  }
+
+  window.addEventListener('appinstalled', () => {
+    deferredInstall = null;
+    if ($install) $install.classList.remove('visible');
+  });
+
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(()=>{}));
+  }
+})();
+</script>
+
+</body>
+</html>

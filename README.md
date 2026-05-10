@@ -10,6 +10,7 @@ Une petite app web monofichier qui héberge des fiches recettes interactives, av
 - 🍰 **Tiramisu classique italien** — mascarpone, œufs séparés, biscuits cuillère imbibés au café. 6 personnes, repos 4 h.
 - 🍪 **Cookies aux pépites de chocolat** — croquant aux bords, moelleux au centre. 12 cookies, four 12 min.
 - 🥧 **Quiche lorraine à l'ancienne** — pâte brisée maison, lardons fumés, appareil œufs-crème. 8 parts, moule 26 cm.
+- 🍞 **Pain maison cuit en cocotte** — levure boulangère, 2 pousses, cocotte fonte préchauffée 240°C. 1 grosse boule, 6-8 personnes.
 
 ## Lancer en local
 

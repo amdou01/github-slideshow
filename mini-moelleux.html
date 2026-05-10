@@ -1,0 +1,1150 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#1F2A44">
+<meta name="description" content="Checklist interactive pour mini-moelleux au sirop de canne — 6 personnes, airfryer.">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Moelleux">
+<title>Checklist · Mini-moelleux au sirop de canne</title>
+
+<link rel="manifest" href="data:application/manifest+json;charset=utf-8,%7B%22name%22%3A%22Mini-moelleux%20au%20sirop%20de%20canne%22%2C%22short_name%22%3A%22Moelleux%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23F4ECDB%22%2C%22theme_color%22%3A%22%231F2A44%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%3Bbase64%2CPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMCAxMCI%2BPHJlY3Qgd2lkdGg9IjEwIiBoZWlnaHQ9IjEwIiBmaWxsPSIjQzc1QjNGIi8%2BPHRleHQgeD0iNSIgeT0iNyIgZm9udC1zaXplPSI2IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjRkFGNEU2Ij5NPC90ZXh0Pjwvc3ZnPg%3D%3D%22%2C%22sizes%22%3A%22any%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%7D%5D%7D">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,300..700,0..100&family=Inter+Tight:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --bone:#F4ECDB;
+    --paper:#FAF4E6;
+    --indigo:#1F2A44;
+    --indigo-deep:#141B2D;
+    --terra:#C75B3F;
+    --ochre:#D4A04C;
+    --ochre-dark:#9C6F1E;
+    --moss:#5C7361;
+    --ink:#1B1410;
+    --soft:#5E5040;
+    --line:#D9C9AE;
+    --line-soft:#E8DCC1;
+    --warm-bg:#FFF8EC;
+    --safe-top:env(safe-area-inset-top, 0px);
+    --safe-bottom:env(safe-area-inset-bottom, 0px);
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0}
+
+  html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+
+  body{
+    background:var(--bone);
+    color:var(--ink);
+    font-family:'Inter Tight',-apple-system,BlinkMacSystemFont,sans-serif;
+    font-weight:500;
+    line-height:1.55;
+    font-size:15.5px;
+    -webkit-font-smoothing:antialiased;
+    padding:0 16px 120px;
+    padding-top:calc(56px + var(--safe-top));
+    padding-bottom:calc(120px + var(--safe-bottom));
+    min-height:100vh;
+    overscroll-behavior-y:contain;
+  }
+
+  /* PROGRESS BAR — sticky top */
+  .progress-bar{
+    position:fixed;
+    top:0;left:0;right:0;
+    background:var(--paper);
+    border-bottom:1px solid var(--ink);
+    padding:10px 16px;
+    padding-top:calc(10px + var(--safe-top));
+    z-index:50;
+    backdrop-filter:saturate(180%) blur(8px);
+    -webkit-backdrop-filter:saturate(180%) blur(8px);
+    background:rgba(250,244,230,.92);
+  }
+  .progress-bar .row{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    max-width:860px;
+    margin:0 auto 6px;
+  }
+  .progress-bar .title{
+    font-family:'Fraunces',serif;
+    font-style:italic;
+    font-size:13px;
+    color:var(--indigo);
+    flex:1;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+  .progress-bar .pct{
+    font-family:'JetBrains Mono',monospace;
+    font-size:12px;
+    font-weight:700;
+    color:var(--terra);
+    letter-spacing:.5px;
+  }
+  .progress-track{
+    height:4px;
+    background:var(--line-soft);
+    border-radius:2px;
+    overflow:hidden;
+    max-width:860px;
+    margin:0 auto;
+  }
+  .progress-fill{
+    height:100%;
+    background:linear-gradient(90deg,var(--terra),var(--ochre),var(--moss));
+    width:0%;
+    transition:width .3s ease;
+  }
+
+  .page{max-width:860px;margin:0 auto;background:var(--paper);border:1px solid var(--ink);border-radius:4px;overflow:hidden}
+
+  /* HEADER */
+  .head{
+    padding:32px 36px 26px;
+    border-bottom:2px solid var(--ink);
+    background:var(--paper);
+    position:relative;
+  }
+  .head::before{
+    content:"";
+    position:absolute;top:0;left:0;right:0;height:6px;
+    background:linear-gradient(90deg,var(--terra) 0%,var(--ochre) 50%,var(--moss) 100%);
+  }
+  .top-row{
+    display:flex;justify-content:space-between;align-items:center;
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;
+    letter-spacing:2px;
+    text-transform:uppercase;
+    color:var(--terra);
+    font-weight:700;
+    margin-bottom:18px;
+  }
+  .top-row .ref{color:var(--soft)}
+  h1{
+    font-family:'Fraunces',serif;
+    font-weight:400;
+    font-variation-settings:"opsz" 144,"SOFT" 30;
+    font-size:clamp(32px,5vw,48px);
+    line-height:1;
+    color:var(--indigo);
+    letter-spacing:-1.2px;
+    margin-bottom:6px;
+  }
+  h1 em{font-style:italic;color:var(--terra);font-weight:500}
+  .subtitle{
+    color:var(--soft);
+    font-family:'Fraunces',serif;
+    font-style:italic;
+    font-size:16px;
+    font-weight:300;
+  }
+  .meta-row{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
+    gap:14px;
+    margin-top:22px;
+    padding-top:18px;
+    border-top:1px solid var(--line);
+  }
+  .meta b{
+    display:block;
+    font-family:'JetBrains Mono',monospace;
+    font-size:9px;
+    letter-spacing:1.5px;
+    text-transform:uppercase;
+    color:var(--soft);
+    font-weight:700;
+    margin-bottom:4px;
+  }
+  .meta span{
+    font-family:'Fraunces',serif;
+    font-size:18px;
+    font-weight:500;
+    color:var(--indigo);
+  }
+
+  /* TIMELINE */
+  .timeline{margin-top:22px;padding-top:18px;border-top:1px solid var(--line)}
+  .timeline-title{
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;
+    letter-spacing:2.5px;
+    text-transform:uppercase;
+    color:var(--terra);
+    font-weight:700;
+    margin-bottom:14px;
+  }
+  .phases{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px}
+  .phase{
+    background:var(--bone);
+    border:1px solid var(--line);
+    border-left:3px solid var(--terra);
+    border-radius:2px;
+    padding:10px 12px;
+    text-decoration:none;
+    color:inherit;
+    transition:transform .15s ease;
+  }
+  .phase:active{transform:scale(.98)}
+  .phase.p2{border-left-color:var(--ochre)}
+  .phase.p2 .phase-lab{color:var(--ochre-dark)}
+  .phase.p3{border-left-color:var(--indigo)}
+  .phase.p3 .phase-lab{color:var(--indigo)}
+  .phase.p4{border-left-color:var(--moss)}
+  .phase.p4 .phase-lab{color:var(--moss)}
+  .phase-lab{
+    font-family:'JetBrains Mono',monospace;
+    font-size:9px;
+    letter-spacing:1.5px;
+    color:var(--terra);
+    font-weight:700;
+    margin-bottom:3px;
+  }
+  .phase-name{
+    font-family:'Fraunces',serif;
+    font-size:14px;
+    color:var(--indigo);
+    font-weight:500;
+    line-height:1.2;
+  }
+  .phase-steps{
+    font-size:11px;
+    color:var(--soft);
+    margin-top:3px;
+    font-family:'JetBrains Mono',monospace;
+  }
+
+  /* SECTION */
+  .section{
+    padding:28px 36px 24px;
+    border-bottom:1px solid var(--line);
+    scroll-margin-top:80px;
+  }
+  .section:last-child{border-bottom:none}
+  .section.tip{background:linear-gradient(180deg,var(--warm-bg) 0%,var(--paper) 100%)}
+  .section.sos{background:var(--warm-bg);border-top:2px solid var(--terra)}
+  .section-head{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    margin-bottom:18px;
+  }
+  .step-num{
+    font-family:'Fraunces',serif;
+    font-style:italic;
+    font-weight:300;
+    font-size:38px;
+    color:var(--terra);
+    line-height:1;
+    letter-spacing:-2px;
+    min-width:50px;
+  }
+  .step-num.moss{color:var(--moss)}
+  .step-num.warn{color:var(--terra)}
+  .section-head h2{
+    font-family:'Fraunces',serif;
+    font-weight:500;
+    font-size:22px;
+    color:var(--indigo);
+    line-height:1.1;
+    flex:1;
+  }
+  .time{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    color:var(--soft);
+    background:var(--bone);
+    border:1px solid var(--line);
+    padding:4px 10px;
+    border-radius:2px;
+    font-weight:700;
+    letter-spacing:1px;
+    white-space:nowrap;
+  }
+  .time.moss{background:var(--moss);color:white;border-color:var(--moss)}
+  .time.terra{background:var(--terra);color:white;border-color:var(--terra)}
+
+  /* CALLOUT */
+  .callout{
+    padding:14px 18px;
+    margin-bottom:18px;
+    border-radius:0 3px 3px 0;
+  }
+  .callout.tip{background:var(--warm-bg);border-left:3px solid var(--ochre)}
+  .callout.warn{background:var(--moss);color:white;padding:14px 18px;border-radius:3px}
+  .callout.dark{background:var(--indigo-deep);color:var(--bone);padding:18px 22px;border-radius:3px;border-left:4px solid var(--ochre);margin-top:24px}
+  .callout.note{background:#fff;border:1px dashed var(--line);padding:14px 18px;margin-top:14px;border-radius:3px}
+  .callout-lab{
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;
+    letter-spacing:2px;
+    text-transform:uppercase;
+    font-weight:700;
+    margin-bottom:4px;
+  }
+  .callout.tip .callout-lab{color:var(--ochre-dark)}
+  .callout.warn .callout-lab{color:#FFE9C7}
+  .callout.dark .callout-lab{color:var(--ochre);margin-bottom:6px}
+  .callout.note .callout-lab{color:var(--moss)}
+  .callout p{
+    font-size:14px;
+    line-height:1.5;
+    font-style:italic;
+    font-family:'Fraunces',serif;
+  }
+  .callout.warn p{font-weight:500;font-style:normal;font-family:inherit;font-size:14px}
+  .callout.warn b{color:#FFE9C7}
+  .callout.dark p{font-style:italic;font-size:15px;line-height:1.5}
+  .callout.dark b{font-style:normal;font-weight:700;color:var(--ochre)}
+  .callout.note p{font-style:normal;font-family:inherit;color:var(--ink)}
+
+  /* SUB HEADERS */
+  .sub-head{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    letter-spacing:2.5px;
+    text-transform:uppercase;
+    color:var(--terra);
+    font-weight:700;
+    margin:24px 0 12px;
+    padding-top:8px;
+    border-top:1px solid var(--line);
+  }
+  .sub-head:first-of-type{margin-top:0;padding-top:0;border-top:none}
+  .sub-head .badge{
+    background:var(--moss);
+    color:white;
+    padding:2px 8px;
+    border-radius:2px;
+    font-size:9px;
+    margin-left:6px;
+  }
+  .sub-head .badge.ochre{background:var(--ochre);color:var(--indigo-deep)}
+
+  /* CHECKLIST */
+  .check-list{list-style:none;padding:0}
+  .check-list li{
+    display:grid;
+    grid-template-columns:auto 1fr auto;
+    gap:14px;
+    align-items:flex-start;
+    padding:11px 0;
+    border-bottom:1px dashed var(--line-soft);
+  }
+  .check-list li:last-child{border-bottom:none}
+
+  .cb-wrap{
+    display:inline-flex;
+    align-items:flex-start;
+    cursor:pointer;
+    min-width:44px;
+    min-height:44px;
+    margin:-11px 0;
+    padding:11px 0;
+  }
+  .cb{
+    display:inline-block;
+    width:22px;height:22px;
+    border:2px solid var(--ink);
+    border-radius:3px;
+    background:var(--paper);
+    position:relative;
+    flex-shrink:0;
+    transition:all .15s ease;
+    margin-top:1px;
+  }
+  .cb-wrap:hover .cb{border-color:var(--terra)}
+  .cb-wrap:focus-visible .cb{outline:2px solid var(--terra);outline-offset:2px}
+  input[type="checkbox"]{position:absolute;opacity:0;pointer-events:none}
+  input[type="checkbox"]:checked + .cb{
+    background:var(--moss);
+    border-color:var(--moss);
+  }
+  input[type="checkbox"]:checked + .cb::after{
+    content:"";
+    position:absolute;
+    left:6px;top:2px;
+    width:6px;height:11px;
+    border:solid white;
+    border-width:0 2.5px 2.5px 0;
+    transform:rotate(42deg);
+  }
+
+  .label{
+    line-height:1.45;
+    color:var(--ink);
+    font-weight:500;
+    font-size:15.5px;
+    transition:opacity .2s ease;
+  }
+  li.done .label{
+    text-decoration:line-through;
+    color:var(--soft);
+    opacity:.6;
+  }
+  .label .qty{
+    font-family:'JetBrains Mono',monospace;
+    font-weight:700;
+    color:var(--indigo);
+    font-size:14.5px;
+    background:var(--bone);
+    padding:1px 8px;
+    border-radius:3px;
+    margin-right:6px;
+    border:1px solid var(--line);
+  }
+  .label .note{
+    display:block;
+    font-family:'Fraunces',serif;
+    font-style:italic;
+    font-size:13.5px;
+    color:var(--soft);
+    margin-top:3px;
+    font-weight:400;
+  }
+  .label .opt{
+    display:inline-block;
+    background:var(--ochre);
+    color:var(--indigo-deep);
+    font-family:'JetBrains Mono',monospace;
+    font-size:9px;
+    letter-spacing:1.5px;
+    text-transform:uppercase;
+    font-weight:700;
+    padding:2px 6px;
+    border-radius:2px;
+    margin-left:6px;
+    vertical-align:middle;
+  }
+
+  .tag{
+    font-family:'JetBrains Mono',monospace;
+    font-size:9px;
+    letter-spacing:1.2px;
+    text-transform:uppercase;
+    color:var(--soft);
+    font-weight:700;
+    padding-top:5px;
+    white-space:nowrap;
+  }
+
+  /* TEMP BLOCK */
+  .temp-block{
+    background:var(--indigo);
+    color:var(--bone);
+    padding:18px 22px;
+    border-radius:3px;
+    margin:14px 0 4px;
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+    gap:18px;
+    align-items:center;
+  }
+  .temp-cell .lab{
+    font-family:'JetBrains Mono',monospace;
+    font-size:9px;
+    letter-spacing:2px;
+    text-transform:uppercase;
+    color:var(--ochre);
+    font-weight:700;
+    margin-bottom:3px;
+  }
+  .temp-cell .val{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    font-size:24px;
+    color:var(--bone);
+    line-height:1.1;
+  }
+  .temp-cell .val .unit{
+    font-family:'JetBrains Mono',monospace;
+    font-size:14px;
+    font-weight:500;
+    color:var(--ochre);
+    margin-left:2px;
+  }
+
+  /* TIMERS */
+  .timers{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+    gap:10px;
+    margin-top:14px;
+  }
+  .timer-btn{
+    background:var(--paper);
+    border:2px solid var(--indigo);
+    color:var(--indigo);
+    padding:12px 14px;
+    border-radius:3px;
+    font-family:'JetBrains Mono',monospace;
+    font-weight:700;
+    font-size:12px;
+    letter-spacing:1px;
+    text-transform:uppercase;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    transition:all .15s ease;
+    min-height:48px;
+  }
+  .timer-btn:hover{background:var(--indigo);color:var(--paper)}
+  .timer-btn:focus-visible{outline:2px solid var(--terra);outline-offset:2px}
+  .timer-btn.running{background:var(--terra);color:white;border-color:var(--terra);animation:pulse 2s ease-in-out infinite}
+  .timer-btn.done{background:var(--moss);color:white;border-color:var(--moss)}
+  .timer-btn .label-t{font-size:11px;letter-spacing:1.5px}
+  .timer-btn .countdown{font-size:14px;font-variant-numeric:tabular-nums}
+  @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(199,91,63,.4)}50%{box-shadow:0 0 0 8px rgba(199,91,63,0)}}
+
+  /* WARNINGS */
+  .warns{
+    background:var(--bone);
+    border-left:3px solid var(--terra);
+    padding:18px 22px;
+    margin:0 36px 28px;
+    border-radius:0 3px 3px 0;
+  }
+  .warns h3{
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;
+    letter-spacing:2.5px;
+    text-transform:uppercase;
+    color:var(--terra);
+    font-weight:700;
+    margin-bottom:12px;
+  }
+  .warns ul{list-style:none;padding:0}
+  .warns li{
+    padding:6px 0 6px 22px;
+    position:relative;
+    font-size:14px;
+    line-height:1.5;
+  }
+  .warns li::before{
+    content:"⚠";
+    position:absolute;left:0;top:6px;
+    color:var(--terra);
+    font-weight:700;
+  }
+  .warns li b{color:var(--indigo);font-weight:700}
+
+  /* QUALITY */
+  .quality{
+    background:linear-gradient(180deg,var(--paper) 0%,var(--bone) 100%);
+    padding:24px 36px;
+    border-top:2px solid var(--ink);
+  }
+  .quality h2{
+    font-family:'Fraunces',serif;
+    font-style:italic;
+    font-size:22px;
+    color:var(--indigo);
+    margin-bottom:14px;
+    font-weight:500;
+  }
+  .quality h2 em{color:var(--terra)}
+  .quality-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+    gap:14px;
+    margin-top:12px;
+  }
+  .q-card{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:3px;
+    padding:14px 16px;
+  }
+  .q-card .lab{
+    font-family:'JetBrains Mono',monospace;
+    font-size:9px;
+    letter-spacing:1.5px;
+    text-transform:uppercase;
+    color:var(--terra);
+    font-weight:700;
+    margin-bottom:6px;
+  }
+  .q-card p{
+    font-size:13.5px;
+    color:var(--ink);
+    line-height:1.45;
+  }
+
+  /* FOOTER */
+  .foot{
+    padding:18px 36px;
+    background:var(--indigo-deep);
+    color:var(--bone);
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;
+    letter-spacing:1.5px;
+    text-transform:uppercase;
+    font-weight:600;
+  }
+  .foot .ays{color:var(--ochre);font-weight:700}
+
+  /* BOTTOM ACTION BAR */
+  .actions{
+    position:fixed;
+    bottom:0;left:0;right:0;
+    padding:12px 16px;
+    padding-bottom:calc(12px + var(--safe-bottom));
+    background:rgba(20,27,45,.95);
+    backdrop-filter:saturate(180%) blur(8px);
+    -webkit-backdrop-filter:saturate(180%) blur(8px);
+    z-index:50;
+    display:flex;
+    gap:8px;
+    justify-content:center;
+    border-top:1px solid var(--ink);
+  }
+  .action-btn{
+    background:transparent;
+    color:var(--bone);
+    border:1px solid var(--soft);
+    padding:10px 14px;
+    border-radius:50px;
+    font-family:'Inter Tight',sans-serif;
+    font-size:12px;
+    font-weight:600;
+    letter-spacing:.8px;
+    text-transform:uppercase;
+    cursor:pointer;
+    min-height:44px;
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    transition:all .15s ease;
+  }
+  .action-btn:hover,.action-btn:focus-visible{background:var(--terra);border-color:var(--terra);outline:none}
+  .action-btn.primary{background:var(--terra);border-color:var(--terra)}
+  .action-btn.primary:hover{background:var(--ochre);border-color:var(--ochre);color:var(--indigo-deep)}
+
+  /* TOAST */
+  .toast{
+    position:fixed;
+    bottom:calc(80px + var(--safe-bottom));
+    left:50%;
+    transform:translateX(-50%) translateY(20px);
+    background:var(--indigo-deep);
+    color:var(--bone);
+    padding:12px 20px;
+    border-radius:50px;
+    font-size:13px;
+    font-weight:600;
+    z-index:100;
+    opacity:0;
+    pointer-events:none;
+    transition:all .3s ease;
+    box-shadow:0 4px 16px rgba(0,0,0,.3);
+    max-width:90vw;
+    text-align:center;
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  /* RESPONSIVE */
+  @media(max-width:600px){
+    body{font-size:15px}
+    .head,.section,.warns,.quality,.foot{padding-left:18px;padding-right:18px}
+    .warns{margin-left:18px;margin-right:18px}
+    .step-num{font-size:30px;min-width:38px}
+    .section-head h2{font-size:18px}
+    .check-list li{grid-template-columns:auto 1fr;gap:10px}
+    .tag{display:none}
+    .meta-row{grid-template-columns:repeat(2,1fr)}
+    .top-row{font-size:9px}
+    .action-btn{padding:10px 12px;font-size:11px}
+  }
+
+  @media print{
+    body{background:white;padding:0}
+    .page{border:none;border-radius:0;background:white}
+    .progress-bar,.actions,.toast,.timers{display:none}
+    .section,.warns{break-inside:avoid;page-break-inside:avoid}
+    .cb{print-color-adjust:exact;-webkit-print-color-adjust:exact}
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+  }
+</style>
+</head>
+<body>
+
+<!-- STICKY PROGRESS BAR -->
+<div class="progress-bar" role="progressbar" aria-label="Progression de la recette" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="progressBar">
+  <div class="row">
+    <span class="title">Mini-moelleux au sirop de canne</span>
+    <span class="pct" id="pctText">0%</span>
+  </div>
+  <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+</div>
+
+<main class="page">
+
+  <!-- HEADER -->
+  <header class="head">
+    <div class="top-row">
+      <span>Fiche Cuisine · Checklist Opérationnelle</span>
+      <span class="ref">Réf. CHK-001-v3 · Mai 2026</span>
+    </div>
+    <h1>Mini-moelleux<br>au <em>sirop de canne</em></h1>
+    <p class="subtitle">Version revisitée : sirop de canne pur + lait frais local. À cuire à l'airfryer en moules individuels — 6 personnes au batteur sur socle.</p>
+
+    <div class="meta-row">
+      <div class="meta"><b>Portions</b><span>6 personnes</span></div>
+      <div class="meta"><b>Moules dispo.</b><span>5 unités</span></div>
+      <div class="meta"><b>Stratégie</b><span>1 fournée + 1</span></div>
+      <div class="meta"><b>Préparation</b><span>10 min</span></div>
+      <div class="meta"><b>Cuisson</b><span>2 × 15 min</span></div>
+    </div>
+
+    <nav class="timeline" aria-label="Vue d'ensemble des phases">
+      <div class="timeline-title">Vue d'ensemble · 4 phases</div>
+      <div class="phases">
+        <a class="phase" href="#s1"><div class="phase-lab">PHASE 1 · 5 MIN</div><div class="phase-name">Mise en place</div><div class="phase-steps">01 · 02</div></a>
+        <a class="phase p2" href="#s3"><div class="phase-lab">PHASE 2 · 15 MIN</div><div class="phase-name">Préparation parallèle</div><div class="phase-steps">03 · 04 · 05 · 06</div></a>
+        <a class="phase p3" href="#s7"><div class="phase-lab">PHASE 3 · 30 MIN</div><div class="phase-name">Cuisson 2 fournées</div><div class="phase-steps">07</div></a>
+        <a class="phase p4" href="#s8"><div class="phase-lab">PHASE 4 · 5 MIN</div><div class="phase-name">Service</div><div class="phase-steps">08</div></a>
+      </div>
+    </nav>
+  </header>
+
+  <!-- SECTION 1 — INGRÉDIENTS -->
+  <section class="section" id="s1" aria-labelledby="h-s1">
+    <div class="section-head">
+      <div class="step-num">01</div>
+      <h2 id="h-s1">Mise en place — ingrédients</h2>
+      <span class="time">5 min</span>
+    </div>
+    <ul class="check-list">
+      <li><label class="cb-wrap"><input type="checkbox"><span class="cb"></span></label><span class="label"><span class="qty">250 ml</span>Sirop de canne pur (non alcoolisé)<span class="note">Apporte le sucre et un parfum caractéristique de canne — remplace le lait concentré sucré</span></span><span class="tag">Base liquide</span></li>
+      <li><label class="cb-wrap"><input type="checkbox"><span class="cb"></span></label><span class="label"><span class="qty">250 ml</span>Lait frais demi-écrémé<span class="note">Lait local de collecte si disponible — texture plus aérée qu'avec lait concentré</span></span><span class="tag">Base liquide</span></li>
+      <li><label class="cb-wrap"><input type="checkbox"><span class="cb"></span></label><span class="label"><span class="qty">300 g</span>Farine<span class="note">Blé, mil ou mix 50/50 selon préférence</span></span><span class="tag">Sec</span></li>
+      <li><label class="cb-wrap"><input type="checkbox"><span class="cb"></span></label><span class="label"><span class="qty">16 g</span>Levure chimique saveur vanille (1,5 sachet)<span class="note">La vanille est déjà incorporée — ne pas en rajouter</span></span><span class="tag">Sec</span></li>
+      <li><label class="cb-wrap"><input type="checkbox"><span class="cb"></span></label><span class="label"><span class="qty">3 unités</span>Œufs entiers (à température ambiante)</span><span class="tag">Frais</span></li>
+      <li><label class="cb-wrap"><input type="checkbox"><span class="cb"></span></label><span class="label"><span class="qty">90 g</span>Beurre (à fondre)</span><span class="tag">Frais</span></li>
+      <li><label class="cb-wrap"><input type="checkbox"><span class="cb"></span></label><span class="label"><span class="qty">2 pincées</span>Sel fin</span><span class="tag">Sec</span></li>
+      <li><label class="cb-wrap"><input type="checkbox"><span class="cb"></span></label><span class="label">Pépites de chocolat ou raisins secs<span class="opt">Option</span><span class="note">Au choix — atelier participatif</span></span><span class="tag">Garniture</span></li>
+    </ul>
+  </section>
+
+  <!-- SECTION 2 — MATÉRIEL -->
+  <section class="section" id="s2" aria-labelledby="h-s2">
+    <div class="section-head">
+      <div class="step-num">02</div>
+      <h2 id="h-s2">Mise en place — matériel</h2>
+      <span class="time">2 min</span>
+    </div>
+    <ul class="check-list">
+      <li><label class="cb-wrap"><input type="checkbox"><span class="cb"></span></label><span class="label"><b>5 moules ronds individuels</b> (compatibles airfryer)<span class="note">Pour 6 personnes : prévoir 2 fournées (5 + 1)</span></span><span class="tag">Cuisson</span></li>
+      <li><label class="cb-wrap"><input type="checkbox"><span class="cb"></span></label><span class="label"><b>Batteur sur socle avec fouets jumelés</b> + bol inox<span class="note">Idéal pour émulsionner œufs+sirop, suffisant pour incorporer la farine en douceur</span></span><span class="tag">Mélange</span></li>
+      <li><label class="cb-wrap"><input type="checkbox"><span class="cb"></span></label><span class="label"><b>Verre doseur 1000 ml/g</b> (graduations volumes + poids)<span class="note">Pratique pour mesurer farine ET liquides sans balance</span></span><span class="tag">Mesure</span></li>
+      <li><label class="cb-wrap"><input type="checkbox"><span class="cb"></span></label><span class="label">1 tamis ou passoire fine (pour la farine)</span><span class="tag">Préparation</span></li>
+      <li><label class="cb-wrap"><input type="checkbox"><span class="cb"></span></label><span class="label">1 spatule maryse (récupération de pâte sur les parois du bol)</span><span class="tag">Mélange</span></li>
+      <li><label class="cb-wrap"><input type="checkbox"><span class="cb"></span></label><span class="label">1 pinceau ou morceau de papier (pour beurrer les moules)</span><span class="tag">Préparation</span></li>
+      <li><label class="cb-wrap"><input type="checkbox"><span class="cb"></span></label><span class="label">1 louche ou cuillère à glace (remplissage régulier des moules)</span><span class="tag">Service</span></li>
+      <li><label class="cb-wrap"><input type="checkbox"><span class="cb"></span></label><span class="label">1 cure-dent ou pointe de couteau (test cuisson)</span><span class="tag">Contrôle</span></li>
+    </ul>
+  </section>
+
+  <!-- SECTION 3 — PRÉPARATION PARALLÈLE -->
+  <section class="section" id="s3" aria-labelledby="h-s3">
+    <div class="section-head">
+      <div class="step-num">03</div>
+      <h2 id="h-s3">Préparation parallèle — beurre &amp; moules</h2>
+      <span class="time">5 min</span>
+    </div>
+    <div class="callout tip">
+      <div class="callout-lab">Logique chef pro</div>
+      <p>Pendant que le beurre fond (2-3 min sans surveillance active), on beurre et farine les 5 moules. Gain de temps : 3 minutes.</p>
+    </div>
+    <ul class="check-list">
+      <li><label class="cb-wrap"><input type="checkbox"><span class="cb"></span></label><span class="label"><b>Lancer le beurre à fondre</b> au micro-ondes ou bain-marie<span class="note">Puissance moyenne, surveiller pour ne pas qu'il bout — laisser ensuite tiédir</span></span><span class="tag">Action 1</span></li>
+      <li><label class="cb-wrap"><input type="checkbox"><span class="cb"></span></label><span class="label"><b>⏱ Pendant ce temps :</b> beurrer généreusement les 5 moules au pinceau</span><span class="tag">Action 2</span></li>
+      <li><label class="cb-wrap"><input type="checkbox"><span class="cb"></span></label><span class="label">Saupoudrer chaque moule de farine, taper pour retirer l'excédent</span><span class="tag">Action 3</span></li>
+      <li><label class="cb-wrap"><input type="checkbox"><span class="cb"></span></label><span class="label">Aligner les moules sur le plan de travail, prêts à remplir</span><span class="tag">Action 4</span></li>
+      <li><label class="cb-wrap"><input type="checkbox"><span class="cb"></span></label><span class="label">Vérifier que le beurre est <b>tiède</b>, pas chaud (toucher du doigt sans gêne)<span class="note">Beurre trop chaud = œufs cuits dans le bol à l'étape suivante</span></span><span class="tag">Contrôle</span></li>
+    </ul>
+  </section>
+
+  <!-- SECTION 4 — PÂTE -->
+  <section class="section" id="s4" aria-labelledby="h-s4">
+    <div class="section-head">
+      <div class="step-num">04</div>
+      <h2 id="h-s4">Préparation de la pâte au batteur</h2>
+      <span class="time">4 min</span>
+    </div>
+    <ul class="check-list">
+      <li><label class="cb-wrap"><input type="checkbox"><span class="cb"></span></label><span class="label">Mesurer 250 ml de sirop de canne + 250 ml de lait frais au verre doseur</span><span class="tag">Étape 1</span></li>
+      <li><label class="cb-wrap"><input type="checkbox"><span class="cb"></span></label><span class="label">Casser les 3 œufs dans le bol du batteur, ajouter le sirop de canne<span class="note">Vitesse moyenne · 45 secondes — l'émulsion devient mousseuse</span></span><span class="tag">Étape 2</span></li>
+      <li><label class="cb-wrap"><input type="checkbox"><span class="cb"></span></label><span class="label">Verser le lait frais en filet, batteur en marche · vitesse moyenne · 20 secondes</span><span class="tag">Étape 3</span></li>
+      <li><label class="cb-wrap"><input type="checkbox"><span class="cb"></span></label><span class="label">Ajouter le beurre fondu tiédi · vitesse moyenne · 15 secondes</span><span class="tag">Étape 4</span></li>
+      <li><label class="cb-wrap"><input type="checkbox"><span class="cb"></span></label><span class="label">Tamiser farine + levure vanille + sel ensemble dans un bol à part</span><span class="tag">Étape 5</span></li>
+      <li><label class="cb-wrap"><input type="checkbox"><span class="cb"></span></label><span class="label">Incorporer le sec en 3 fois · <b>vitesse minimale</b> · 30 secondes par ajout<span class="note">Vitesse minimale impérative — les fouets jumelés développent vite le gluten</span></span><span class="tag">Étape 6</span></li>
+      <li><label class="cb-wrap"><input type="checkbox"><span class="cb"></span></label><span class="label">Arrêter le batteur, racler les parois à la maryse, donner 5 secondes finales</span><span class="tag">Étape 7</span></li>
+      <li><label class="cb-wrap"><input type="checkbox"><span class="cb"></span></label><span class="label">Ajouter pépites / raisins à la spatule, hors batteur<span class="opt">Option</span></span><span class="tag">Étape 8</span></li>
+    </ul>
+  </section>
+
+  <!-- SECTION 5 — TEST -->
+  <section class="section tip" id="s5" aria-labelledby="h-s5">
+    <div class="section-head">
+      <div class="step-num moss">05</div>
+      <h2 id="h-s5">Test de consistance — point de contrôle</h2>
+      <span class="time moss">1 min</span>
+    </div>
+    <div class="callout warn">
+      <div class="callout-lab">Pourquoi cette étape</div>
+      <p>Avec sirop de canne + lait frais, la pâte peut être plus liquide qu'attendu. <b>Mieux vaut corriger maintenant qu'avoir des moelleux ratés à la sortie de l'airfryer.</b></p>
+    </div>
+    <ul class="check-list">
+      <li><label class="cb-wrap"><input type="checkbox"><span class="cb"></span></label><span class="label"><b>Test du ruban :</b> soulever la louche, la pâte doit retomber en ruban épais qui marque la surface 2-3 secondes<span class="note">✅ Ruban visible 2-3 sec = bonne consistance · ❌ Ruban disparaît immédiatement = trop liquide</span></span><span class="tag">Diagnostic</span></li>
+      <li><label class="cb-wrap"><input type="checkbox"><span class="cb"></span></label><span class="label">Si pâte conforme : continuer directement à la section 06</span><span class="tag">✅ OK</span></li>
+      <li><label class="cb-wrap"><input type="checkbox"><span class="cb"></span></label><span class="label">Si pâte trop liquide : appliquer le protocole de rattrapage<span class="note">Voir section "Diagnostic &amp; rattrapage" en bas du document — Solution 2 (repos 15 min) résout 80% des cas</span></span><span class="tag">⚠ Action</span></li>
+    </ul>
+  </section>
+
+  <!-- SECTION 6 — REMPLISSAGE -->
+  <section class="section" id="s6" aria-labelledby="h-s6">
+    <div class="section-head">
+      <div class="step-num">06</div>
+      <h2 id="h-s6">Remplissage des moules + préchauffage</h2>
+      <span class="time">5 min</span>
+    </div>
+    <div class="callout tip">
+      <div class="callout-lab">Logique chef pro</div>
+      <p>Préchauffage lancé maintenant (et non au début) : économie d'énergie, et l'airfryer atteint sa température exactement quand les moules sont prêts à entrer.</p>
+    </div>
+    <ul class="check-list">
+      <li><label class="cb-wrap"><input type="checkbox"><span class="cb"></span></label><span class="label"><b>Lancer le préchauffage airfryer</b> : 160°C · 3 min<span class="note">Vérifier au préalable que le panier est propre et sec</span></span><span class="tag">Action 1</span></li>
+      <li><label class="cb-wrap"><input type="checkbox"><span class="cb"></span></label><span class="label"><b>⏱ Pendant ce temps :</b> remplir chaque moule aux <b>2/3 maximum</b> à la louche<span class="note">Au-delà, ça déborde à la cuisson — la pâte au sirop de canne gonfle bien</span></span><span class="tag">Critique</span></li>
+      <li><label class="cb-wrap"><input type="checkbox"><span class="cb"></span></label><span class="label"><b>Réserver le reste de pâte couvert au frais</b> pour la 2ᵉ fournée<span class="note">Maximum 30 min — la levure perd son efficacité au-delà</span></span><span class="tag">Stratégie</span></li>
+      <li><label class="cb-wrap"><input type="checkbox"><span class="cb"></span></label><span class="label">Tapoter chaque moule sur le plan de travail (chasser les bulles d'air)</span><span class="tag">Finition</span></li>
+    </ul>
+  </section>
+
+  <!-- SECTION 7 — CUISSON -->
+  <section class="section" id="s7" aria-labelledby="h-s7">
+    <div class="section-head">
+      <div class="step-num">07</div>
+      <h2 id="h-s7">Cuisson en 2 fournées</h2>
+      <span class="time">2 × 15 min</span>
+    </div>
+    <div class="temp-block">
+      <div class="temp-cell"><div class="lab">Température</div><div class="val">160<span class="unit">°C</span></div></div>
+      <div class="temp-cell"><div class="lab">Fournée 1 (5 moules)</div><div class="val">15-18<span class="unit">min</span></div></div>
+      <div class="temp-cell"><div class="lab">Fournée 2 (1 moule)</div><div class="val">12-14<span class="unit">min</span></div></div>
+    </div>
+
+    <!-- COOKING TIMERS -->
+    <div class="timers" role="group" aria-label="Minuteurs de cuisson">
+      <button class="timer-btn" data-timer="900" aria-label="Lancer minuteur 15 minutes">
+        <span class="label-t">Fournée 1</span>
+        <span class="countdown">15:00</span>
+      </button>
+      <button class="timer-btn" data-timer="720" aria-label="Lancer minuteur 12 minutes">
+        <span class="label-t">Contrôle 12 min</span>
+        <span class="countdown">12:00</span>
+      </button>
+      <button class="timer-btn" data-timer="780" aria-label="Lancer minuteur 13 minutes">
+        <span class="label-t">Fournée 2</span>
+        <span class="countdown">13:00</span>
+      </button>
+    </div>
+
+    <ul class="check-list" style="margin-top:14px">
+      <li><label class="cb-wrap"><input type="checkbox"><span class="cb"></span></label><span class="label"><b>Fournée 1 :</b> Disposer les 5 moules dans le panier (espacés)</span><span class="tag">Étape 1</span></li>
+      <li><label class="cb-wrap"><input type="checkbox"><span class="cb"></span></label><span class="label">Lancer la cuisson : 160°C pendant 15 minutes</span><span class="tag">Étape 2</span></li>
+      <li><label class="cb-wrap"><input type="checkbox"><span class="cb"></span></label><span class="label">À 12 min : vérifier la coloration (dorée, pas brune)<span class="note">Si trop foncé : couvrir d'un papier alu pour les 5 dernières min</span></span><span class="tag">Contrôle</span></li>
+      <li><label class="cb-wrap"><input type="checkbox"><span class="cb"></span></label><span class="label">À 15 min : test du cure-dent au centre<span class="note">Doit ressortir sec ou avec quelques miettes — pas de pâte liquide</span></span><span class="tag">Contrôle</span></li>
+      <li><label class="cb-wrap"><input type="checkbox"><span class="cb"></span></label><span class="label">Sortir la fournée 1, démouler 1 moule rapidement (le laisser tiédir à part)</span><span class="tag">Transition</span></li>
+      <li><label class="cb-wrap"><input type="checkbox"><span class="cb"></span></label><span class="label"><b>Fournée 2 :</b> Beurrer-fariner le moule libre, le remplir avec la pâte réservée<span class="note">Le panier étant déjà chaud : pas de préchauffage nécessaire, réduire la cuisson de 2-3 min</span></span><span class="tag">Étape 6</span></li>
+      <li><label class="cb-wrap"><input type="checkbox"><span class="cb"></span></label><span class="label">Cuire le 6ᵉ moelleux : 160°C · 12-14 min · contrôle au cure-dent</span><span class="tag">Étape 7</span></li>
+    </ul>
+  </section>
+
+  <!-- SECTION 8 — DÉMOULAGE -->
+  <section class="section" id="s8" aria-labelledby="h-s8">
+    <div class="section-head">
+      <div class="step-num">08</div>
+      <h2 id="h-s8">Démoulage et service</h2>
+      <span class="time">5 min</span>
+    </div>
+    <ul class="check-list">
+      <li><label class="cb-wrap"><input type="checkbox"><span class="cb"></span></label><span class="label">Sortir les moules avec une pince ou un gant (très chaud)</span><span class="tag">Sécurité</span></li>
+      <li><label class="cb-wrap"><input type="checkbox"><span class="cb"></span></label><span class="label">Laisser tiédir <b>5 minutes minimum</b> dans les moules<span class="note">Démouler trop tôt = moelleux qui casse</span></span><span class="tag">Critique</span></li>
+      <li><label class="cb-wrap"><input type="checkbox"><span class="cb"></span></label><span class="label">Passer une lame fine autour de chaque moelleux</span><span class="tag">Étape 3</span></li>
+      <li><label class="cb-wrap"><input type="checkbox"><span class="cb"></span></label><span class="label">Retourner sur une grille pour démouler</span><span class="tag">Étape 4</span></li>
+      <li><label class="cb-wrap"><input type="checkbox"><span class="cb"></span></label><span class="label">Servir tiède ou laisser refroidir complètement<span class="note">Conservation 48h à température ambiante, dans une boîte hermétique</span></span><span class="tag">Service</span></li>
+    </ul>
+  </section>
+
+  <!-- POINTS DE VIGILANCE -->
+  <aside class="warns" aria-labelledby="warn-h">
+    <h3 id="warn-h">Points de vigilance — pièges à éviter</h3>
+    <ul>
+      <li><b>Sirop de canne ≠ rhum :</b> bien vérifier que le produit est non alcoolisé (mention "pur sirop de canne, sucre 100% pur canne" sur l'étiquette).</li>
+      <li><b>Ne jamais dépasser 180°C :</b> le sirop de canne caramélise très vite. Le dessus brûle et le centre reste cru.</li>
+      <li><b>Pâte plus liquide qu'avec lait concentré :</b> normal, sirop + lait frais sont moins denses. Bien remplir aux 2/3 stricts pour éviter le débordement.</li>
+      <li><b>Beurre fondu trop chaud :</b> coagule les œufs et casse l'émulsion. Toujours laisser tiédir 2-3 min avant incorporation.</li>
+      <li><b>Batteur à fouets jumelés sur la farine :</b> vitesse minimale impérative, par petites quantités. Sinon mie compacte et dense.</li>
+      <li><b>Pâte réservée trop longtemps :</b> la levure chimique perd son efficacité après 30 min hors froid. Pâte au frigo entre les 2 fournées.</li>
+      <li><b>Ouvrir trop tôt :</b> chute de température = mie qui retombe. Attendre 12 min avant le premier contrôle visuel.</li>
+    </ul>
+  </aside>
+
+  <!-- DIAGNOSTIC -->
+  <section class="section sos" id="sos" aria-labelledby="h-sos">
+    <div class="section-head">
+      <div class="step-num warn">⚠</div>
+      <h2 id="h-sos">Diagnostic &amp; rattrapage — pâte trop liquide</h2>
+      <span class="time terra">SOS</span>
+    </div>
+
+    <p style="font-family:'Fraunces',serif;font-style:italic;color:var(--soft);font-size:15px;margin-bottom:18px;line-height:1.5">La consistance idéale ressemble à une pâte à crêpes épaisse : elle coule lentement de la louche en un ruban continu. Si elle est plus liquide, voici le protocole.</p>
+
+    <h4 class="sub-head">Test visuel rapide</h4>
+    <ul class="check-list">
+      <li><label class="cb-wrap"><input type="checkbox"><span class="cb"></span></label><span class="label"><b>Test du ruban :</b> soulever la louche, la pâte doit retomber en un ruban épais qui marque la surface 2-3 secondes avant de se résorber<span class="note">Si elle disparaît immédiatement = trop liquide. Si elle ne coule pas = trop épaisse.</span></span><span class="tag">Diagnostic</span></li>
+      <li><label class="cb-wrap"><input type="checkbox"><span class="cb"></span></label><span class="label"><b>Test du dos de cuillère :</b> tremper le dos d'une cuillère, la pâte doit y adhérer et former une couche visible<span class="note">Si la cuillère ressort presque propre = pâte trop liquide</span></span><span class="tag">Diagnostic</span></li>
+    </ul>
+
+    <h4 class="sub-head">Solution 1 — Ajout progressif de farine <span class="badge">RECOMMANDÉ</span></h4>
+    <ul class="check-list">
+      <li><label class="cb-wrap"><input type="checkbox"><span class="cb"></span></label><span class="label">Ajouter <b>1 cuillère à soupe de farine tamisée</b> (≈ 10 g)<span class="note">Toujours par petites doses, jamais d'un coup</span></span><span class="tag">Étape 1</span></li>
+      <li><label class="cb-wrap"><input type="checkbox"><span class="cb"></span></label><span class="label">Mélanger au batteur · vitesse minimale · 15 secondes</span><span class="tag">Étape 2</span></li>
+      <li><label class="cb-wrap"><input type="checkbox"><span class="cb"></span></label><span class="label">Refaire le test du ruban</span><span class="tag">Étape 3</span></li>
+      <li><label class="cb-wrap"><input type="checkbox"><span class="cb"></span></label><span class="label">Si encore trop liquide : répéter (max 3 cuillères, soit 30 g)<span class="note">Au-delà : déséquilibre — la pâte devient trop dense</span></span><span class="tag">Limite</span></li>
+      <li><label class="cb-wrap"><input type="checkbox"><span class="cb"></span></label><span class="label"><b>Compenser la levure</b> si plus de 2 c. à soupe ajoutées : ½ c. à café supplémentaire</span><span class="tag">Ajustement</span></li>
+    </ul>
+
+    <h4 class="sub-head">Solution 2 — Repos au frais</h4>
+    <ul class="check-list">
+      <li><label class="cb-wrap"><input type="checkbox"><span class="cb"></span></label><span class="label">Couvrir le bol et placer au réfrigérateur <b>15 à 20 minutes</b><span class="note">La farine absorbe progressivement les liquides, la pâte épaissit naturellement</span></span><span class="tag">Méthode douce</span></li>
+      <li><label class="cb-wrap"><input type="checkbox"><span class="cb"></span></label><span class="label">Refaire le test du ruban après repos</span><span class="tag">Contrôle</span></li>
+      <li><label class="cb-wrap"><input type="checkbox"><span class="cb"></span></label><span class="label">Si toujours trop liquide : combiner avec Solution 1</span><span class="tag">Combinaison</span></li>
+    </ul>
+
+    <h4 class="sub-head">Solution 3 — Ajustement cuisson <span class="badge ochre">DERNIER RECOURS</span></h4>
+    <ul class="check-list">
+      <li><label class="cb-wrap"><input type="checkbox"><span class="cb"></span></label><span class="label">Si la pâte est légèrement liquide mais correcte : remplir aux <b>1/2 seulement</b> (au lieu de 2/3)<span class="note">Évite le débordement à la cuisson</span></span><span class="tag">Étape 1</span></li>
+      <li><label class="cb-wrap"><input type="checkbox"><span class="cb"></span></label><span class="label">Démarrer la cuisson à <b>150°C</b> au lieu de 160°C pour les 5 premières minutes</span><span class="tag">Étape 2</span></li>
+      <li><label class="cb-wrap"><input type="checkbox"><span class="cb"></span></label><span class="label">Remonter à 160°C ensuite, prolonger de 3 à 5 min la cuisson totale</span><span class="tag">Étape 3</span></li>
+      <li><label class="cb-wrap"><input type="checkbox"><span class="cb"></span></label><span class="label">Test du cure-dent obligatoire — la pâte liquide met plus de temps à cuire à cœur</span><span class="tag">Critique</span></li>
+    </ul>
+
+    <div class="callout dark">
+      <div class="callout-lab">Cause probable du problème</div>
+      <p>Le sirop de canne et le lait frais sont plus fluides que le lait concentré. Si la pâte semble trop liquide, c'est généralement parce que <b>la farine n'a pas encore fini d'absorber les liquides</b> — la Solution 2 (repos au frais 15 min) résout 80% des cas sans modifier la recette.</p>
+    </div>
+
+    <div class="callout note">
+      <div class="callout-lab">Pour la prochaine fois</div>
+      <p>Notez la quantité de farine ajoutée et reportez-la dans une éventuelle CHK-001-v4 pour calibrer définitivement la recette à votre cuisine, votre humidité ambiante et votre marque de farine.</p>
+    </div>
+  </section>
+
+  <!-- QUALITY -->
+  <section class="quality" aria-labelledby="qh">
+    <h2 id="qh">Contrôle qualité — <em>signature AYS</em></h2>
+    <div class="quality-grid">
+      <div class="q-card"><div class="lab">Aspect</div><p>Dôme régulier, surface dorée et légèrement craquelée</p></div>
+      <div class="q-card"><div class="lab">Texture</div><p>Mie aérée, moelleuse, légère résistance sous la dent</p></div>
+      <div class="q-card"><div class="lab">Couleur</div><p>Doré uniforme — ni pâle (cru), ni foncé (trop cuit)</p></div>
+      <div class="q-card"><div class="lab">Goût</div><p>Doux, lacté, légèrement caramélisé en surface</p></div>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <span>CHK-001-v3 · Mini-moelleux sirop de canne · 6 personnes</span>
+    <span class="ays">— A Y S —</span>
+  </footer>
+</main>
+
+<!-- BOTTOM ACTION BAR -->
+<nav class="actions" aria-label="Actions">
+  <button class="action-btn" id="nextBtn" type="button" aria-label="Aller à la prochaine étape">↓ Suivant</button>
+  <button class="action-btn" id="printBtn" type="button" aria-label="Imprimer la fiche">⎙ Imprimer</button>
+  <button class="action-btn" id="resetBtn" type="button" aria-label="Réinitialiser la checklist">↻ Réinitialiser</button>
+</nav>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(() => {
+  'use strict';
+
+  const STORAGE_KEY = 'moelleux-chk-v3';
+  const checkboxes = Array.from(document.querySelectorAll('input[type="checkbox"]'));
+  const fill = document.getElementById('progressFill');
+  const pctText = document.getElementById('pctText');
+  const progressBar = document.getElementById('progressBar');
+  const toast = document.getElementById('toast');
+  let toastTimer;
+
+  // Index each checkbox by order — stable across reloads as long as the DOM order is unchanged
+  checkboxes.forEach((cb, i) => { cb.dataset.idx = i; });
+
+  // ── State persistence ───────────────────────────────────────────
+  const loadState = () => {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return;
+      const checked = JSON.parse(raw);
+      if (!Array.isArray(checked)) return;
+      checked.forEach(i => {
+        const cb = checkboxes[i];
+        if (cb) { cb.checked = true; cb.closest('li')?.classList.add('done'); }
+      });
+    } catch (e) { /* corrupt state — ignore */ }
+  };
+
+  const saveState = () => {
+    const checked = checkboxes.filter(cb => cb.checked).map(cb => +cb.dataset.idx);
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(checked)); } catch (e) {}
+  };
+
+  // ── Progress bar ────────────────────────────────────────────────
+  const updateProgress = () => {
+    const total = checkboxes.length;
+    const done = checkboxes.filter(cb => cb.checked).length;
+    const pct = total ? Math.round((done / total) * 100) : 0;
+    fill.style.width = pct + '%';
+    pctText.textContent = pct + '%';
+    progressBar.setAttribute('aria-valuenow', pct);
+    if (pct === 100) showToast('🎉 Recette terminée — bon appétit !');
+  };
+
+  // ── Toast notifications ─────────────────────────────────────────
+  const showToast = (msg, ms = 2500) => {
+    toast.textContent = msg;
+    toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove('show'), ms);
+  };
+
+  // ── Checkbox events ─────────────────────────────────────────────
+  checkboxes.forEach(cb => {
+    cb.addEventListener('change', () => {
+      cb.closest('li')?.classList.toggle('done', cb.checked);
+      saveState();
+      updateProgress();
+    });
+  });
+
+  // ── Reset ───────────────────────────────────────────────────────
+  document.getElementById('resetBtn').addEventListener('click', () => {
+    if (!confirm('Réinitialiser toute la checklist ?')) return;
+    checkboxes.forEach(cb => {
+      cb.checked = false;
+      cb.closest('li')?.classList.remove('done');
+    });
+    try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
+    updateProgress();
+    showToast('Checklist réinitialisée');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  // ── Print ───────────────────────────────────────────────────────
+  document.getElementById('printBtn').addEventListener('click', () => window.print());
+
+  // ── Jump to next unchecked ──────────────────────────────────────
+  document.getElementById('nextBtn').addEventListener('click', () => {
+    const next = checkboxes.find(cb => !cb.checked);
+    if (!next) { showToast('Tout est coché !'); return; }
+    const li = next.closest('li');
+    li?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    li?.animate(
+      [{ background: 'rgba(199,91,63,.18)' }, { background: 'transparent' }],
+      { duration: 1400, easing: 'ease-out' }
+    );
+  });
+
+  // ── Cooking timers ──────────────────────────────────────────────
+  let wakeLock = null;
+  const requestWakeLock = async () => {
+    if (!('wakeLock' in navigator)) return;
+    try { wakeLock = await navigator.wakeLock.request('screen'); } catch (e) {}
+  };
+  const releaseWakeLock = () => { wakeLock?.release().catch(() => {}); wakeLock = null; };
+
+  const fmt = s => `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
+
+  document.querySelectorAll('.timer-btn').forEach(btn => {
+    const total = +btn.dataset.timer;
+    const cdEl = btn.querySelector('.countdown');
+    let remaining = total;
+    let intervalId = null;
+    let running = false;
+
+    const reset = () => {
+      remaining = total;
+      cdEl.textContent = fmt(remaining);
+      btn.classList.remove('running', 'done');
+      running = false;
+    };
+
+    const finish = () => {
+      clearInterval(intervalId);
+      btn.classList.remove('running');
+      btn.classList.add('done');
+      running = false;
+      releaseWakeLock();
+      cdEl.textContent = 'Fini !';
+      try { navigator.vibrate?.([300, 150, 300, 150, 600]); } catch (e) {}
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain); gain.connect(ctx.destination);
+        osc.frequency.value = 880; gain.gain.value = .3;
+        osc.start(); osc.stop(ctx.currentTime + .6);
+      } catch (e) {}
+      showToast(`⏰ Minuteur "${btn.querySelector('.label-t').textContent}" terminé`, 5000);
+    };
+
+    btn.addEventListener('click', () => {
+      if (btn.classList.contains('done')) { reset(); return; }
+      if (running) {
+        clearInterval(intervalId);
+        btn.classList.remove('running');
+        running = false;
+        releaseWakeLock();
+        return;
+      }
+      running = true;
+      btn.classList.add('running');
+      requestWakeLock();
+      intervalId = setInterval(() => {
+        remaining--;
+        cdEl.textContent = fmt(remaining);
+        if (remaining <= 0) finish();
+      }, 1000);
+    });
+  });
+
+  // ── Init ────────────────────────────────────────────────────────
+  loadState();
+  updateProgress();
+})();
+</script>
+
+</body>
+</html>

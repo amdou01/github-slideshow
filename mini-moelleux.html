@@ -1007,10 +1007,10 @@
   const renderItem = (item, idx) => `
     <li>
       <label class="cb-wrap">
-        <input type="checkbox" data-idx="${idx}">
+        <input type="checkbox" data-idx="${idx}" aria-labelledby="lbl-${idx}">
         <span class="cb"></span>
       </label>
-      <span class="label">
+      <span class="label" id="lbl-${idx}">
         ${item.qty ? `<span class="qty">${item.qty}</span>` : ''}
         ${item.text}
         ${item.opt ? `<span class="opt">${item.opt}</span>` : ''}
@@ -1138,7 +1138,7 @@
 
     const meta = recipe.meta.map(m => `<div class="meta"><b>${m.label}</b><span>${m.value}</span></div>`).join('');
     const phases = recipe.phases.map(p => `
-      <button class="phase ${p.accent}" type="button" data-target="${sectionAnchor({ num: p.target.replace('s', '') })}">
+      <button class="phase ${p.accent}" type="button" data-target="${sectionAnchor({ num: p.target.replace('s', '') })}" aria-label="Aller à la phase ${p.name} (${p.time})">
         <div class="phase-lab">PHASE · ${p.time}</div>
         <div class="phase-name">${p.name}</div>
         <div class="phase-steps">${p.steps}</div>
@@ -1218,12 +1218,16 @@
 
   const requestWakeLock = async () => {
     if (!('wakeLock' in navigator)) return;
+    if (wakeLock) return;
     try { wakeLock = await navigator.wakeLock.request('screen'); } catch (_) {}
   };
   const releaseWakeLock = () => { wakeLock?.release().catch(() => {}); wakeLock = null; };
+  const maybeReleaseWakeLock = () => {
+    if (!liveTimers.some(t => t.running)) releaseWakeLock();
+  };
 
   const cleanupRecipe = () => {
-    liveTimers.forEach(t => { clearInterval(t.intervalId); });
+    liveTimers.forEach(t => { clearInterval(t.intervalId); t.intervalId = null; t.running = false; });
     liveTimers.length = 0;
     releaseWakeLock();
   };
@@ -1329,19 +1333,24 @@
 
     const finish = () => {
       clearInterval(state.intervalId);
+      state.intervalId = null;
       btn.classList.remove('running');
       btn.classList.add('done');
       state.running = false;
-      releaseWakeLock();
+      maybeReleaseWakeLock();
       cdEl.textContent = 'Fini !';
       try { navigator.vibrate?.([300, 150, 300, 150, 600]); } catch (_) {}
       try {
-        const ctx = new (window.AudioContext || window.webkitAudioContext)();
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.connect(gain); gain.connect(ctx.destination);
-        osc.frequency.value = 880; gain.gain.value = .3;
-        osc.start(); osc.stop(ctx.currentTime + .6);
+        const Ctx = window.AudioContext || window.webkitAudioContext;
+        if (Ctx) {
+          const ctx = new Ctx();
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.connect(gain); gain.connect(ctx.destination);
+          osc.frequency.value = 880; gain.gain.value = .3;
+          osc.start(); osc.stop(ctx.currentTime + .6);
+          osc.onended = () => { ctx.close?.().catch(() => {}); };
+        }
       } catch (_) {}
       showToast(`⏰ Minuteur "${labelText}" terminé`, 5000);
     };
@@ -1350,9 +1359,10 @@
       if (btn.classList.contains('done')) { reset(); return; }
       if (state.running) {
         clearInterval(state.intervalId);
+        state.intervalId = null;
         btn.classList.remove('running');
         state.running = false;
-        releaseWakeLock();
+        maybeReleaseWakeLock();
         return;
       }
       state.running = true;
@@ -1360,6 +1370,7 @@
       requestWakeLock();
       state.intervalId = setInterval(() => {
         state.remaining--;
+        if (state.remaining < 0) state.remaining = 0;
         cdEl.textContent = fmtTime(state.remaining);
         if (state.remaining <= 0) finish();
       }, 1000);

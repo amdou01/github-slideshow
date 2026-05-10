@@ -12,27 +12,39 @@ Une petite app web monofichier qui héberge des fiches recettes interactives, av
 - 🥧 **Quiche lorraine à l'ancienne** — pâte brisée maison, lardons fumés, appareil œufs-crème. 8 parts, moule 26 cm.
 - 🍞 **Pain maison cuit en cocotte** — levure boulangère, 2 pousses, cocotte fonte préchauffée 240°C. 1 grosse boule, 6-8 personnes.
 
+## Aperçu
+
+| Accueil | Fiche recette |
+|---|---|
+| ![Accueil desktop](docs/screenshots/home-desktop.png) | ![Tiramisu desktop](docs/screenshots/recipe-tiramisu-desktop.png) |
+
+| Accueil mobile | Fiche mobile |
+|---|---|
+| ![Accueil mobile](docs/screenshots/home-mobile.png) | ![Cookies mobile](docs/screenshots/recipe-cookies-mobile.png) |
+
 ## Lancer en local
 
 L'app tient dans un seul fichier sans étape de build :
 
 ```bash
 # Option 1 : ouvrir directement dans le navigateur
-xdg-open mini-moelleux.html      # Linux
-open mini-moelleux.html          # macOS
+xdg-open index.html      # Linux
+open index.html          # macOS
 
 # Option 2 : servir en local pour tester l'install PWA / le Wake Lock
 python3 -m http.server 8000
-# puis http://localhost:8000/mini-moelleux.html
+# puis http://localhost:8000/
 ```
 
 Le routing se fait par hash : `#/` affiche l'accueil avec la liste des recettes, `#/r/<id>` ouvre une fiche (par exemple `#/r/moelleux`).
+
+Pour activer GitHub Pages : Settings → Pages → Source : *Deploy from a branch* → `main` (root). L'app sera servie à `https://<user>.github.io/github-slideshow/`.
 
 ## Ajouter une recette
 
 L'app est entièrement data-driven. Pour ajouter une recette :
 
-1. Ouvrir `mini-moelleux.html`.
+1. Ouvrir `index.html`.
 2. Localiser la table `const RECIPES = { … }` (vers le début du `<script>`).
 3. Y ajouter une nouvelle entrée en suivant le shape ci-dessous. La clé de l'objet (ex. `tarte`) devient l'identifiant utilisé dans l'URL (`#/r/tarte`).
 4. Sauvegarder et recharger : la recette apparaît automatiquement sur l'accueil, son état (cases cochées, minuteurs) est persisté sous la clé `recipe-state-v1-<id>` dans `localStorage`.
